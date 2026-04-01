@@ -610,6 +610,10 @@ public final class Interpreter: @unchecked Sendable {
             return try getNumericArrayElement(name: name, indices: evaluatedIndices)
 
         case .binary(let left, let op, let right):
+            // Handle string comparisons (A$ = "Y", etc.)
+            if isStringExpression(left) || isStringExpression(right) {
+                return try evaluateStringComparison(left, op, right)
+            }
             let lhs = try evaluateNumeric(left)
             let rhs = try evaluateNumeric(right)
             return try evaluateBinaryOp(lhs, op, rhs)
@@ -674,6 +678,23 @@ public final class Interpreter: @unchecked Sendable {
 
         default:
             throw BASICError.typeMismatch(expected: "string", got: "number")
+        }
+    }
+
+    private func evaluateStringComparison(_ left: Expression, _ op: Operator, _ right: Expression) throws -> Double {
+        let lhs = try evaluateString(left)
+        let rhs = try evaluateString(right)
+        switch op {
+        case .equal: return lhs == rhs ? 1 : 0
+        case .notEqual: return lhs != rhs ? 1 : 0
+        case .lessThan: return lhs < rhs ? 1 : 0
+        case .greaterThan: return lhs > rhs ? 1 : 0
+        case .lessThanOrEqual: return lhs <= rhs ? 1 : 0
+        case .greaterThanOrEqual: return lhs >= rhs ? 1 : 0
+        case .plus:
+            throw BASICError.typeMismatch(expected: "number", got: "string")
+        default:
+            throw BASICError.typeMismatch(expected: "number", got: "string")
         }
     }
 
