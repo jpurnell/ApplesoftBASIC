@@ -1,19 +1,23 @@
 # Learn BASIC! A Tutorial for Beginners
 
-Hey! Welcome to Applesoft BASIC. This is the same programming language kids used on Apple II computers starting in 1977 — almost 50 years ago!
+Welcome to Applesoft BASIC — the same programming language kids used on Apple II computers starting in 1977.
 
-You're going to write your very own computer programs. Let's go!
+## Overview
+
+This tutorial walks you through writing your first BASIC programs, from printing text
+on screen all the way to building a number guessing game. Each lesson builds on the
+one before it. All you need is a Mac with Swift installed.
 
 ## Getting Started
 
-First, open the Terminal app on your Mac. Then type:
+Open the Terminal app on your Mac. Then type:
 
 ```
 cd /path/to/ApplesoftBASIC
 swift run applesoft
 ```
 
-You should see something like:
+You should see:
 
 ```
 APPLESOFT BASIC INTERPRETER v0.1.0
@@ -108,10 +112,11 @@ The computer is really good at math. `NEW`, then:
 
 - `+` means add
 - `-` means subtract
-- `*` means multiply
+- `*` means multiply (use the star, not the letter x)
 - `/` means divide
 
-**Your Turn:** Can you make the computer figure out how many hours are in a week? (Hint: 24 hours in a day, 7 days in a week)
+**Your Turn:** Can you make the computer figure out how many hours are in a week?
+(Hint: 24 hours in a day, 7 days in a week)
 
 ## Lesson 4: Variables (Giving Things Names)
 
@@ -151,7 +156,8 @@ A **variable** is like a box with a name on it. You can put a number inside.
 
 The computer will stop and wait for you to type something!
 
-**Your Turn:** Can you make it ask for your age too, and then tell you how old you'll be in 10 years?
+**Your Turn:** Can you make it ask for your age too, and then tell you how old
+you'll be in 10 years?
 
 ```
 10 INPUT "WHAT IS YOUR NAME? ";N$
@@ -187,7 +193,7 @@ The computer will stop and wait for you to type something!
 30 GOTO 10
 ```
 
-**WARNING:** This program never stops! Press Ctrl+C to break out of it.
+> Warning: This program never stops! Press Ctrl+C to break out of it.
 
 Now let's use GOTO with IF to make something useful:
 
@@ -213,6 +219,7 @@ Now let's use GOTO with IF to make something useful:
 ```
 
 This makes:
+
 ```
 *
 **
@@ -221,7 +228,8 @@ This makes:
 *****
 ```
 
-**Your Turn:** Can you make it go the other way? (Hint: `FOR ROW = 5 TO 1 STEP -1`)
+**Your Turn:** Can you make it go the other way?
+(Hint: `FOR ROW = 5 TO 1 STEP -1`)
 
 ## Lesson 9: Subroutines with GOSUB
 
@@ -281,29 +289,8 @@ swift run applesoft samples/adventure.bas
 swift run applesoft samples/astrochart.bas
 ```
 
-The adventure game is the most fun — you get to build the first Apple computer by exploring 1976 California!
-
-## Quick Reference Card
-
-| Command | What It Does |
-|---------|-------------|
-| `PRINT "HI"` | Show text on screen |
-| `PRINT X` | Show a number |
-| `PRINT A;B` | Show A and B right next to each other |
-| `LET X = 5` | Put 5 in variable X |
-| `INPUT "? ";X` | Ask the user for a number |
-| `IF X = 5 THEN ...` | Do something if X is 5 |
-| `GOTO 100` | Jump to line 100 |
-| `FOR I = 1 TO 10` | Start a counting loop |
-| `NEXT I` | Go back to the FOR |
-| `GOSUB 100` | Jump to a subroutine at line 100 |
-| `RETURN` | Come back from a subroutine |
-| `REM comment` | A note (computer ignores it) |
-| `END` | Stop the program |
-| `RUN` | Run your program |
-| `LIST` | Show your program |
-| `NEW` | Erase your program |
-| `HOME` | Clear the screen |
+The adventure game is the most fun — you get to build the first Apple computer
+by exploring 1976 California!
 
 ## Challenge Ideas
 
@@ -318,8 +305,12 @@ Once you've gone through the lessons, try these:
 
 ## A Little History
 
-In 1976 — exactly 50 years ago — Steve Jobs and Steve Wozniak built the first Apple computer in a garage in Los Altos, California. Wozniak wrote a BASIC interpreter for it *by hand*, in machine code, so people could write programs just like the ones you're writing now.
+In 1976 — exactly 50 years ago — Steve Jobs and Steve Wozniak built the first Apple
+computer in a garage in Los Altos, California. Wozniak wrote a BASIC interpreter for
+it *by hand*, in machine code, so people could write programs just like the ones
+you're writing now.
 
-The language you're learning is the same one millions of kids learned on Apple II computers in schools all across America in the 1980s. Your dad was one of them!
+The language you're learning is the same one millions of kids learned on Apple II
+computers in schools all across America in the 1980s. Your dad was one of them!
 
 Happy programming!
