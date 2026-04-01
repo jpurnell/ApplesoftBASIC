@@ -6,4 +6,6 @@ Here it is, along with a few sample programs, including [Steve Jobs' 1975 Atari 
 
 I recommend using the [Apple II font](https://www.kreativekorp.com/software/fonts/apple2/) to keep it real.
 
+New to BASIC? Check out the **[Tutorial](TUTORIAL.md)** — written so a 7-year-old can follow along.
+
 
