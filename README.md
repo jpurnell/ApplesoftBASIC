@@ -6,6 +6,6 @@ Here it is, along with a few sample programs, including [Steve Jobs' 1975 Atari 
 
 I recommend using the [Apple II font](https://www.kreativekorp.com/software/fonts/apple2/) to keep it real.
 
-New to BASIC? The package includes a **Tutorial** and **Language Reference** in the DocC documentation — open `Package.swift` in Xcode and build documentation (Product > Build Documentation) to browse them. The tutorial is written so a 7-year-old can follow along.
+New to BASIC? The package includes a **Tutorial** and **Language Reference** in the DocC documentation — open `Package.swift` in Xcode and build documentation (Product > Build Documentation) to browse them. The tutorial is written so my 7-year-old can follow along.
 
 
