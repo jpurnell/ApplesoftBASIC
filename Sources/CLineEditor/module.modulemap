@@ -1,0 +1,5 @@
+module CLineEditor [system] {
+    header "shim.h"
+    link "edit"
+    export *
+}

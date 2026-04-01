@@ -22,9 +22,12 @@ let package = Package(
         .target(
             name: "ApplesoftBASICLib"
         ),
+        .systemLibrary(
+            name: "CLineEditor"
+        ),
         .executableTarget(
             name: "ApplesoftBASIC",
-            dependencies: ["ApplesoftBASICLib"]
+            dependencies: ["ApplesoftBASICLib", "CLineEditor"]
         ),
         .testTarget(
             name: "ApplesoftBASICTests",
