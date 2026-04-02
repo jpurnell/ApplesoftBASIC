@@ -276,6 +276,217 @@ Let's put it all together! Here's a number guessing game:
 - `INT()` chops off the decimal part
 - So `INT(RND(1) * 10) + 1` gives us a random number from 1 to 10
 
+## Lesson 11: Drawing with Colors!
+
+Now for the fun stuff — you can draw pictures! `GR` turns on color graphics.
+The screen becomes a grid of 40 dots across and 48 dots down, and you can
+color each dot with 16 different colors.
+
+```
+10 GR
+20 COLOR= 12
+30 PLOT 20,24
+40 END
+```
+
+That draws a single bright green dot in the middle of the screen!
+
+- `GR` turns on graphics mode
+- `COLOR= 12` picks bright green (there are 16 colors, numbered 0 to 15)
+- `PLOT 20,24` colors the dot at column 20, row 24
+
+Here are some colors to try:
+
+| Number | Color |
+|--------|-------|
+| 0 | Black |
+| 1 | Red |
+| 3 | Pink |
+| 6 | Blue |
+| 9 | Orange |
+| 12 | Green |
+| 13 | Yellow |
+| 15 | White |
+
+You can also draw lines! `HLIN` draws sideways and `VLIN` draws up and down:
+
+```
+10 GR
+20 COLOR= 1
+30 HLIN 0,39 AT 24
+40 COLOR= 6
+50 VLIN 0,47 AT 20
+60 END
+```
+
+That draws a red line across the middle and a blue line down the middle — a big plus sign!
+
+**Your Turn:** Can you draw a rainbow? Use a FOR loop to draw lines in different colors:
+
+```
+10 GR
+20 FOR C = 0 TO 15
+30   COLOR= C
+40   HLIN 0,39 AT C * 3
+50   HLIN 0,39 AT C * 3 + 1
+60   HLIN 0,39 AT C * 3 + 2
+70 NEXT C
+80 END
+```
+
+You can also check what color a dot is using `SCRN`:
+
+```
+10 GR
+20 COLOR= 9
+30 PLOT 5,5
+40 PRINT SCRN(5,5)
+50 END
+```
+
+That will print `9` because you colored that dot orange (color 9).
+
+## Lesson 12: Hi-Res Drawing!
+
+Want even more detail? `HGR` gives you a huge canvas — 280 dots across and
+192 dots down! You can draw dots and lines anywhere.
+
+```
+10 HGR2
+20 HCOLOR= 1
+30 HPLOT 140,96
+40 END
+```
+
+That draws a single green dot right in the center.
+
+The really cool part is `HPLOT TO` — it draws a line from one point to another:
+
+```
+10 HGR2
+20 HCOLOR= 6
+30 HPLOT 10,10 TO 269,10
+40 HPLOT 269,10 TO 269,181
+50 HPLOT 269,181 TO 10,181
+60 HPLOT 10,181 TO 10,10
+70 END
+```
+
+That draws a blue rectangle! Each `HPLOT TO` draws a line from the
+last point to the new point.
+
+Hi-res colors:
+
+| Number | Color |
+|--------|-------|
+| 0 | Black |
+| 1 | Green |
+| 2 | Purple |
+| 3 | White |
+| 5 | Orange |
+| 6 | Blue |
+
+**Your Turn:** Can you draw a triangle? How about a house shape?
+
+You can even draw a circle using SIN and COS (those are math functions
+that go around in circles):
+
+```
+10 HGR2
+20 HCOLOR= 2
+30 FOR A = 0 TO 360 STEP 5
+40   LET X = INT(COS(A * 3.14159 / 180) * 80 + 140)
+50   LET Y = INT(SIN(A * 3.14159 / 180) * 80 + 96)
+60   IF A = 0 THEN HPLOT X,Y
+70   IF A > 0 THEN HPLOT TO X,Y
+80 NEXT A
+90 END
+```
+
+A purple circle in the middle of the screen!
+
+## Lesson 13: Making Music!
+
+Your computer can make sounds! `BEEP` makes a short beep, and `SOUND`
+lets you play any musical note.
+
+```
+10 BEEP
+20 END
+```
+
+Try it — you should hear a beep!
+
+`SOUND` takes two numbers: the **pitch** (how high or low) and how
+**long** to play it:
+
+```
+10 SOUND 440,0.5
+20 END
+```
+
+That plays the note A (440 is the pitch) for half a second.
+
+Higher numbers = higher pitch. Lower numbers = lower pitch:
+
+```
+10 SOUND 262,0.3
+20 SOUND 294,0.3
+30 SOUND 330,0.3
+40 SOUND 349,0.3
+50 SOUND 392,0.3
+60 SOUND 440,0.3
+70 SOUND 494,0.3
+80 SOUND 523,0.3
+90 END
+```
+
+That plays the musical scale — Do Re Mi Fa Sol La Ti Do!
+
+Here are some note numbers:
+
+| Note | Number |
+|------|--------|
+| C | 262 |
+| D | 294 |
+| E | 330 |
+| F | 349 |
+| G | 392 |
+| A | 440 |
+| B | 494 |
+| High C | 523 |
+
+**Your Turn:** Can you play "Mary Had a Little Lamb"? The notes are:
+E D C D E E E (pause) D D D (pause) E E E
+
+Here's a hint to get you started:
+
+```
+10 SOUND 330,0.3
+20 FOR T = 1 TO 100: NEXT T
+30 SOUND 294,0.3
+40 FOR T = 1 TO 100: NEXT T
+50 SOUND 262,0.3
+```
+
+The `FOR T = 1 TO 100: NEXT T` lines are little pauses between notes.
+
+You can even make a siren!
+
+```
+10 FOR F = 400 TO 800 STEP 50
+20   SOUND F,0.05
+30   FOR T = 1 TO 20: NEXT T
+40 NEXT F
+50 FOR F = 800 TO 400 STEP -50
+60   SOUND F,0.05
+70   FOR T = 1 TO 20: NEXT T
+80 NEXT F
+90 GOTO 10
+```
+
+> Warning: This siren never stops! Press Ctrl+C to break out.
+
 ## Running the Sample Programs
 
 Instead of typing programs in, you can run the ones that come with the interpreter:
@@ -287,10 +498,49 @@ swift run applesoft samples/sinewave.bas
 swift run applesoft samples/guess.bas
 swift run applesoft samples/adventure.bas
 swift run applesoft samples/astrochart.bas
+swift run applesoft samples/graphics.bas
+swift run applesoft samples/lores-art.bas
+swift run applesoft samples/hires-draw.bas
+swift run applesoft samples/music.bas
 ```
 
 The adventure game is the most fun — you get to build the first Apple computer
-by exploring 1976 California!
+by exploring 1976 California! The music demo plays Happy Birthday!
+
+## Quick Reference Card
+
+| Command | What It Does |
+|---------|-------------|
+| `PRINT "HI"` | Show text on screen |
+| `PRINT X` | Show a number |
+| `PRINT A;B` | Show A and B right next to each other |
+| `LET X = 5` | Put 5 in variable X |
+| `INPUT "? ";X` | Ask the user for a number |
+| `IF X = 5 THEN ...` | Do something if X is 5 |
+| `GOTO 100` | Jump to line 100 |
+| `FOR I = 1 TO 10` | Start a counting loop |
+| `NEXT I` | Go back to the FOR |
+| `GOSUB 100` | Jump to a subroutine at line 100 |
+| `RETURN` | Come back from a subroutine |
+| `REM comment` | A note (computer ignores it) |
+| `END` | Stop the program |
+| `RUN` | Run your program |
+| `LIST` | Show your program |
+| `NEW` | Erase your program |
+| `HOME` | Clear the screen |
+| `GR` | Turn on color graphics |
+| `COLOR= n` | Pick a drawing color (0-15) |
+| `PLOT x,y` | Color a dot |
+| `HLIN x1,x2 AT y` | Draw a line sideways |
+| `VLIN y1,y2 AT x` | Draw a line up and down |
+| `SCRN(x,y)` | Check what color a dot is |
+| `TEXT` | Go back to text mode |
+| `HGR2` | Turn on hi-res graphics |
+| `HCOLOR= n` | Pick a hi-res color (0-7) |
+| `HPLOT x,y` | Draw a hi-res dot |
+| `HPLOT TO x,y` | Draw a line to a point |
+| `BEEP` | Make a beep sound |
+| `SOUND f,d` | Play a note (f=pitch, d=how long) |
 
 ## Challenge Ideas
 
@@ -298,10 +548,14 @@ Once you've gone through the lessons, try these:
 
 1. **Mad Libs:** Ask for a noun, verb, and adjective, then print a funny sentence
 2. **Times Tables:** Print the multiplication table for any number
-3. **Countdown:** Count down from 10 to 1 and then print "BLAST OFF!"
+3. **Countdown:** Count down from 10 to 1 and then print "BLAST OFF!" (with sound!)
 4. **Quiz Game:** Ask 5 math questions and keep score
-5. **ASCII Art:** Draw a house, a rocket, or your name out of `*` characters
+5. **Pixel Art:** Draw a smiley face or your initials using PLOT
 6. **Story Generator:** Use `RND` to pick random words and make silly stories
+7. **Etch A Sketch:** Use INPUT to get X and Y, then HPLOT to that spot
+8. **Music Box:** Write a program that plays your favorite song
+9. **Animated Art:** Use a FOR loop to draw and redraw graphics that move
+10. **Color Mixer:** PLOT random colors and see what patterns appear
 
 ## A Little History
 
