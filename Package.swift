@@ -12,10 +12,6 @@ let package = Package(
             name: "ApplesoftBASICLib",
             targets: ["ApplesoftBASICLib"]
         ),
-        .executable(
-            name: "applesoft",
-            targets: ["ApplesoftBASIC"]
-        ),
     ],
     targets: [
         .target(
@@ -26,7 +22,10 @@ let package = Package(
         ),
         .executableTarget(
             name: "ApplesoftBASIC",
-            dependencies: ["ApplesoftBASICLib", "CLineEditor"]
+            dependencies: [
+                "ApplesoftBASICLib",
+                .target(name: "CLineEditor", condition: .when(platforms: [.macOS])),
+            ]
         ),
         .testTarget(
             name: "ApplesoftBASICTests",

@@ -1,6 +1,8 @@
 import Foundation
 import ApplesoftBASICLib
+#if canImport(CLineEditor)
 import CLineEditor
+#endif
 
 /// Applesoft BASIC Interpreter — CLI entry point.
 ///
@@ -57,16 +59,20 @@ func runFile(_ filename: String) {
 /// Reads a line from the terminal using editline, with history and editing support.
 /// Returns nil on EOF (Ctrl+D).
 func readLineWithEditor(prompt: String) -> String? {
+    #if canImport(CLineEditor)
     guard let cString = readline(prompt) else {
         return nil
     }
     let line = String(cString: cString)
-    // Add non-empty lines to history
     if !line.trimmingCharacters(in: .whitespaces).isEmpty {
         add_history(cString)
     }
     free(cString)
     return line
+    #else
+    Swift.print(prompt, terminator: "")
+    return Swift.readLine()
+    #endif
 }
 
 // MARK: - REPL
