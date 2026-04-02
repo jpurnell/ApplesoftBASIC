@@ -150,6 +150,62 @@ public struct Parser: Sendable {
             case .CLR:
                 advance()
                 return .restore // CLR is similar to reset
+            case .TEXT:
+                advance()
+                return .text
+            case .GR:
+                advance()
+                return .gr
+            case .COLOR:
+                advance()
+                // COLOR=n (the = is part of the syntax)
+                try expect(.op(.equal))
+                let expr = try parseExpression()
+                return .colorSet(expr)
+            case .PLOT:
+                advance()
+                let x = try parseExpression()
+                try expect(.comma)
+                let y = try parseExpression()
+                return .plot(x: x, y: y)
+            case .HLIN:
+                advance()
+                let x1 = try parseExpression()
+                try expect(.comma)
+                let x2 = try parseExpression()
+                try expectKeyword(.AT)
+                let y = try parseExpression()
+                return .hlin(x1: x1, x2: x2, y: y)
+            case .VLIN:
+                advance()
+                let y1 = try parseExpression()
+                try expect(.comma)
+                let y2 = try parseExpression()
+                try expectKeyword(.AT)
+                let x = try parseExpression()
+                return .vlin(y1: y1, y2: y2, x: x)
+            case .HGR:
+                advance()
+                return .hgr
+            case .HGR2:
+                advance()
+                return .hgr2
+            case .HCOLOR:
+                advance()
+                try expect(.op(.equal))
+                let expr = try parseExpression()
+                return .hcolorSet(expr)
+            case .HPLOT:
+                return try parseHPlot()
+            case .BEEP:
+                advance()
+                return .beep
+            case .SOUND:
+                advance()
+                let freq = try parseExpression()
+                try expect(.comma)
+                let dur = try parseExpression()
+                return .sound(frequency: freq, duration: dur)
             default:
                 throw BASICError.unexpectedToken(String(describing: token), expected: "statement")
             }
@@ -503,6 +559,48 @@ public struct Parser: Sendable {
         return .defFn(name: name, parameter: param, body: body)
     }
 
+    private mutating func parseHPlot() throws -> Statement {
+        advance() // skip HPLOT
+
+        // HPLOT TO x,y — continue from last position
+        if case .keyword(.TO) = peek() {
+            advance()
+            var points = [HPlotPoint]()
+            // Use a placeholder for the "last position" — the interpreter handles this
+            let x = try parseExpression()
+            try expect(.comma)
+            let y = try parseExpression()
+            points.append(HPlotPoint(x: x, y: y))
+            while case .keyword(.TO) = peek() {
+                advance()
+                let nx = try parseExpression()
+                try expect(.comma)
+                let ny = try parseExpression()
+                points.append(HPlotPoint(x: nx, y: ny))
+            }
+            // Signal "continue from last" by making first point the start
+            // The interpreter will use lastHPlotX/Y for the origin
+            return .hplot(points: [HPlotPoint(x: .numberLiteral(-1), y: .numberLiteral(-1))] + points)
+        }
+
+        // HPLOT x,y [TO x,y ...]
+        var points = [HPlotPoint]()
+        let x = try parseExpression()
+        try expect(.comma)
+        let y = try parseExpression()
+        points.append(HPlotPoint(x: x, y: y))
+
+        while case .keyword(.TO) = peek() {
+            advance()
+            let nx = try parseExpression()
+            try expect(.comma)
+            let ny = try parseExpression()
+            points.append(HPlotPoint(x: nx, y: ny))
+        }
+
+        return .hplot(points: points)
+    }
+
     // MARK: - Expression Parsing (Precedence Climbing)
 
     private mutating func parseExpression() throws -> Expression {
@@ -677,6 +775,17 @@ public struct Parser: Sendable {
 
     private mutating func parseKeywordExpression(_ kw: Keyword) throws -> Expression {
         switch kw {
+        // Graphics screen read functions
+        case .SCRN, .HSCRN:
+            let funcName = kw.rawValue
+            advance()
+            try expect(.leftParen)
+            let x = try parseExpression()
+            try expect(.comma)
+            let y = try parseExpression()
+            try expect(.rightParen)
+            return .functionCall(name: funcName, arguments: [x, y])
+
         // Math functions
         case .ABS, .ATN, .COS, .EXP, .INT, .LOG, .SGN, .SIN, .SQR, .TAN,
              .ASC, .LEN, .VAL, .FRE, .POS, .PEEK, .RND:

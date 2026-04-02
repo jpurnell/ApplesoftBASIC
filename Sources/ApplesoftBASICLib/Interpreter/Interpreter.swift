@@ -9,8 +9,10 @@ public final class Interpreter: @unchecked Sendable {
     private let program: Program
     private let output: any OutputHandler
     private let input: any InputHandler
+    private let sound: any SoundHandler
     private let maxSteps: Int
     private let environment: Environment
+    private let graphicsBuffer: GraphicsBuffer
     private var rng: any RandomNumberGenerator
 
     /// Current line index in the program's lines array.
@@ -31,19 +33,23 @@ public final class Interpreter: @unchecked Sendable {
     ///   - program: The parsed program to execute.
     ///   - output: Handler for PRINT output. Defaults to ``ConsoleOutput``.
     ///   - input: Handler for INPUT/GET. Defaults to ``ConsoleInput``.
+    ///   - sound: Handler for BEEP/SOUND. Defaults to ``MutedSoundHandler``.
     ///   - maxSteps: Maximum execution steps before throwing
     ///     ``BASICError/stepCountExceeded(limit:)``. Defaults to 1,000,000.
     public init(
         program: Program,
         output: any OutputHandler = ConsoleOutput(),
         input: any InputHandler = ConsoleInput(),
+        sound: any SoundHandler = MutedSoundHandler(),
         maxSteps: Int = 1_000_000
     ) {
         self.program = program
         self.output = output
         self.input = input
+        self.sound = sound
         self.maxSteps = maxSteps
         self.environment = Environment()
+        self.graphicsBuffer = GraphicsBuffer()
         self.rng = SystemRandomNumberGenerator()
     }
 
@@ -262,6 +268,105 @@ public final class Interpreter: @unchecked Sendable {
             // Text mode changes — no-op in terminal mode
             return .next
 
+        case .text:
+            graphicsBuffer.switchToText()
+            return .next
+
+        case .gr:
+            graphicsBuffer.switchToLoRes()
+            output.clearScreen()
+            let rendered = GraphicsRenderer.renderLoRes(graphicsBuffer)
+            output.print(rendered)
+            return .next
+
+        case .colorSet(let expr):
+            let color = try evaluateToInt(expr)
+            graphicsBuffer.setColor(UInt8(max(0, min(color, 15))))
+            return .next
+
+        case .plot(let xExpr, let yExpr):
+            let x = try evaluateToInt(xExpr)
+            let y = try evaluateToInt(yExpr)
+            try graphicsBuffer.plot(x: x, y: y)
+            let rendered = GraphicsRenderer.renderLoResDirty(graphicsBuffer)
+            if !rendered.isEmpty { output.print(rendered) }
+            graphicsBuffer.clearDirty()
+            return .next
+
+        case .hlin(let x1Expr, let x2Expr, let yExpr):
+            let x1 = try evaluateToInt(x1Expr)
+            let x2 = try evaluateToInt(x2Expr)
+            let y = try evaluateToInt(yExpr)
+            try graphicsBuffer.hlin(x1: x1, x2: x2, y: y)
+            let rendered = GraphicsRenderer.renderLoResDirty(graphicsBuffer)
+            if !rendered.isEmpty { output.print(rendered) }
+            graphicsBuffer.clearDirty()
+            return .next
+
+        case .vlin(let y1Expr, let y2Expr, let xExpr):
+            let y1 = try evaluateToInt(y1Expr)
+            let y2 = try evaluateToInt(y2Expr)
+            let x = try evaluateToInt(xExpr)
+            try graphicsBuffer.vlin(y1: y1, y2: y2, x: x)
+            let rendered = GraphicsRenderer.renderLoResDirty(graphicsBuffer)
+            if !rendered.isEmpty { output.print(rendered) }
+            graphicsBuffer.clearDirty()
+            return .next
+
+        case .hgr:
+            graphicsBuffer.switchToHiRes()
+            output.clearScreen()
+            return .next
+
+        case .hgr2:
+            graphicsBuffer.switchToHiResFull()
+            output.clearScreen()
+            return .next
+
+        case .hcolorSet(let expr):
+            let color = try evaluateToInt(expr)
+            graphicsBuffer.setHColor(UInt8(max(0, min(color, 7))))
+            return .next
+
+        case .hplot(let points):
+            guard let first = points.first else { return .next }
+            let x0 = try evaluateToInt(first.x)
+            let y0 = try evaluateToInt(first.y)
+            var prevX: Int
+            var prevY: Int
+            if x0 == -1 && y0 == -1 {
+                // HPLOT TO — continue from last position
+                prevX = graphicsBuffer.lastHPlotX
+                prevY = graphicsBuffer.lastHPlotY
+            } else {
+                try graphicsBuffer.hplot(x: x0, y: y0)
+                prevX = x0
+                prevY = y0
+            }
+            for point in points.dropFirst() {
+                let x = try evaluateToInt(point.x)
+                let y = try evaluateToInt(point.y)
+                try graphicsBuffer.hplotLine(x1: prevX, y1: prevY, x2: x, y2: y)
+                prevX = x
+                prevY = y
+            }
+            let rendered = GraphicsRenderer.renderHiResDirty(graphicsBuffer)
+            if !rendered.isEmpty { output.print(rendered) }
+            graphicsBuffer.clearDirty()
+            return .next
+
+        case .beep:
+            sound.beep()
+            return .next
+
+        case .sound(let freqExpr, let durExpr):
+            let freq = try evaluateNumeric(freqExpr)
+            let dur = try evaluateNumeric(durExpr)
+            guard freq >= 0 else { throw BASICError.illegalQuantity(freq) }
+            guard dur >= 0 else { throw BASICError.illegalQuantity(dur) }
+            sound.playTone(frequency: freq, duration: dur)
+            return .next
+
         case .end, .stop:
             return .end
         }
@@ -288,8 +393,18 @@ public final class Interpreter: @unchecked Sendable {
                     }
                 } else if isStringExpression(expr) {
                     let str = try evaluateString(expr)
-                    output.print(str)
-                    printColumn += str.count
+                    // Detect BEL character for beep
+                    if str.contains("\u{07}") {
+                        sound.beep()
+                        let cleaned = str.replacingOccurrences(of: "\u{07}", with: "")
+                        if !cleaned.isEmpty {
+                            output.print(cleaned)
+                            printColumn += cleaned.count
+                        }
+                    } else {
+                        output.print(str)
+                        printColumn += str.count
+                    }
                 } else {
                     let num = try evaluateNumeric(expr)
                     let str = formatNumber(num)
@@ -719,6 +834,22 @@ public final class Interpreter: @unchecked Sendable {
     }
 
     private func evaluateFunction(name: String, args: [Expression]) throws -> Double {
+        // Graphics screen read functions
+        switch name {
+        case "SCRN":
+            guard args.count == 2 else { throw BASICError.illegalQuantity(0) }
+            let x = try evaluateToInt(args[0])
+            let y = try evaluateToInt(args[1])
+            return Double(try graphicsBuffer.scrn(x: x, y: y))
+        case "HSCRN":
+            guard args.count == 2 else { throw BASICError.illegalQuantity(0) }
+            let x = try evaluateToInt(args[0])
+            let y = try evaluateToInt(args[1])
+            return Double(try graphicsBuffer.hscrn(x: x, y: y))
+        default:
+            break
+        }
+
         // String functions that return numeric values
         switch name {
         case "LEN":

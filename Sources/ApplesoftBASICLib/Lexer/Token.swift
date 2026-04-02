@@ -51,6 +51,14 @@ public enum Keyword: String, Sendable, CaseIterable {
 
     // Screen
     case HOME, HTAB, VTAB, INVERSE, NORMAL, FLASH
+    case TEXT
+
+    // Graphics
+    case GR, COLOR, PLOT, HLIN, VLIN, AT, SCRN
+    case HGR, HGR2, HCOLOR, HPLOT, HSCRN
+
+    // Sound
+    case BEEP, SOUND
 
     // Commands
     case RUN, LIST, NEW, DEL, CLR

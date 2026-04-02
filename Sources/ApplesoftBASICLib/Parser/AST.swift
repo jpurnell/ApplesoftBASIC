@@ -92,6 +92,42 @@ public indirect enum Statement: Sendable, Equatable {
     /// `FLASH`
     case flash
 
+    /// `TEXT` — return to text mode
+    case text
+
+    /// `GR` — switch to lo-res graphics mode
+    case gr
+
+    /// `COLOR=n` — set lo-res drawing color (0-15)
+    case colorSet(Expression)
+
+    /// `PLOT x,y` — plot a lo-res pixel
+    case plot(x: Expression, y: Expression)
+
+    /// `HLIN x1,x2 AT y` — draw lo-res horizontal line
+    case hlin(x1: Expression, x2: Expression, y: Expression)
+
+    /// `VLIN y1,y2 AT x` — draw lo-res vertical line
+    case vlin(y1: Expression, y2: Expression, x: Expression)
+
+    /// `HGR` — switch to hi-res graphics mode (280x160 + text)
+    case hgr
+
+    /// `HGR2` — switch to full hi-res mode (280x192)
+    case hgr2
+
+    /// `HCOLOR=n` — set hi-res drawing color (0-7)
+    case hcolorSet(Expression)
+
+    /// `HPLOT x,y [TO x2,y2 ...]` — plot point or draw connected lines
+    case hplot(points: [HPlotPoint])
+
+    /// `BEEP` — short tone
+    case beep
+
+    /// `SOUND freq, duration` — play a tone
+    case sound(frequency: Expression, duration: Expression)
+
     /// `END`
     case end
 
@@ -207,5 +243,19 @@ public struct DimDeclaration: Sendable, Equatable {
     public init(name: String, dimensions: [Expression]) {
         self.name = name
         self.dimensions = dimensions
+    }
+}
+
+/// A point in an HPLOT command.
+public struct HPlotPoint: Sendable, Equatable {
+    /// The x coordinate expression.
+    public let x: Expression
+    /// The y coordinate expression.
+    public let y: Expression
+
+    /// Creates an HPLOT point.
+    public init(x: Expression, y: Expression) {
+        self.x = x
+        self.y = y
     }
 }

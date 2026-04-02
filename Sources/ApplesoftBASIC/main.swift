@@ -38,7 +38,12 @@ func runFile(_ filename: String) {
         let tokens = try lexer.tokenize()
         var parser = Parser(tokens: tokens)
         let program = try parser.parse()
-        let interpreter = Interpreter(program: program)
+        #if canImport(AVFoundation)
+        let sound: any SoundHandler = AudioSoundHandler()
+        #else
+        let sound: any SoundHandler = MutedSoundHandler()
+        #endif
+        let interpreter = Interpreter(program: program, sound: sound)
         try interpreter.run()
     } catch let error as BASICError {
         printError(error.applesoftMessage)
