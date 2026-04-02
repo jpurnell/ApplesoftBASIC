@@ -62,8 +62,8 @@ public struct Lexer: Sendable {
                 continue
             }
 
-            // String literal
-            if char == "\"" {
+            // String literal (accept straight and smart quotes)
+            if char == "\"" || char == "\u{201C}" || char == "\u{201D}" {
                 let string = try readStringLiteral()
                 tokens.append(.stringLiteral(string))
                 continue
@@ -132,14 +132,16 @@ public struct Lexer: Sendable {
         return number
     }
 
+    private static func isQuote(_ char: Character) -> Bool {
+        char == "\"" || char == "\u{201C}" || char == "\u{201D}"
+    }
+
     private mutating func readStringLiteral() throws -> String {
         position += 1 // skip opening quote
         var result = ""
-        while position < characters.count && characters[position] != "\"" {
+        while position < characters.count && !Self.isQuote(characters[position]) {
             let char = characters[position]
             if char == "\n" || char == "\r" {
-                // Applesoft allows unterminated strings to end at EOL
-                // but we'll treat this as an error for correctness
                 throw BASICError.unterminatedString(line: currentLine)
             }
             result.append(char)
