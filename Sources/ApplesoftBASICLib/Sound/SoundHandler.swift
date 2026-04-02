@@ -66,6 +66,7 @@ public final class AudioSoundHandler: SoundHandler, @unchecked Sendable {
     }
 
     /// Plays a square-wave tone at the specified frequency.
+    /// Blocks for the full duration of the tone.
     public func playTone(frequency: Double, duration: Double) {
         let freq = max(20, min(frequency, 20000))
         let dur = max(0.001, min(duration, 30))
@@ -76,11 +77,8 @@ public final class AudioSoundHandler: SoundHandler, @unchecked Sendable {
         lock.unlock()
 
         startEngine()
-
-        let durationMs = Int(dur * 1000)
-        DispatchQueue.global().asyncAfter(deadline: .now() + .milliseconds(durationMs)) { [weak self] in
-            self?.stopEngine()
-        }
+        Thread.sleep(forTimeInterval: dur)
+        stopEngine()
     }
 
     private func startEngine() {

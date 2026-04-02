@@ -357,7 +357,6 @@ public final class Interpreter: @unchecked Sendable {
 
         case .beep:
             sound.beep()
-            Thread.sleep(forTimeInterval: 0.15)
             return .next
 
         case .sound(let freqExpr, let durExpr):
@@ -365,10 +364,7 @@ public final class Interpreter: @unchecked Sendable {
             let dur = try evaluateNumeric(durExpr)
             guard freq >= 0 else { throw BASICError.illegalQuantity(freq) }
             guard dur >= 0 else { throw BASICError.illegalQuantity(dur) }
-            let clampedDur = max(0.001, min(dur, 30))
-            sound.playTone(frequency: freq, duration: clampedDur)
-            // Block for the tone duration (SOUND is synchronous in GW-BASIC)
-            Thread.sleep(forTimeInterval: clampedDur)
+            sound.playTone(frequency: freq, duration: max(0.001, min(dur, 30)))
             return .next
 
         case .end, .stop:
