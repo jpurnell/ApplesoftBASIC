@@ -116,6 +116,7 @@ public struct PrintItem: Sendable, Equatable {
     /// The separator following this item.
     public let separator: PrintSeparator
 
+    /// Creates a print item with an optional expression and separator.
     public init(expression: Expression?, separator: PrintSeparator = .newline) {
         self.expression = expression
         self.separator = separator
@@ -202,6 +203,7 @@ public struct DimDeclaration: Sendable, Equatable {
     /// The dimension sizes.
     public let dimensions: [Expression]
 
+    /// Creates a DIM declaration for an array with the given dimensions.
     public init(name: String, dimensions: [Expression]) {
         self.name = name
         self.dimensions = dimensions

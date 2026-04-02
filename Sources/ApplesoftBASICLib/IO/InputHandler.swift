@@ -10,13 +10,16 @@ public protocol InputHandler: AnyObject, Sendable {
 /// Default input handler that reads from standard input.
 public final class ConsoleInput: InputHandler, @unchecked Sendable {
 
+    /// Creates a console input handler that reads from stdin.
     public init() {}
 
+    /// Displays the prompt and reads a line from standard input.
     public func readLine(prompt: String) -> String? {
         Swift.print(prompt, terminator: "")
         return Swift.readLine()
     }
 
+    /// Reads a line from stdin and returns the first character.
     public func getChar() -> Character? {
         // Simple implementation: read a line and take the first character
         guard let line = Swift.readLine(), let first = line.first else {
@@ -46,6 +49,7 @@ public final class ScriptedInput: InputHandler, @unchecked Sendable {
         self.charResponses = charResponses
     }
 
+    /// Returns the next scripted response, or nil if exhausted.
     public func readLine(prompt: String) -> String? {
         receivedPrompts.append(prompt)
         guard responseIndex < responses.count else { return nil }
@@ -54,6 +58,7 @@ public final class ScriptedInput: InputHandler, @unchecked Sendable {
         return response
     }
 
+    /// Returns the next scripted character, or nil if exhausted.
     public func getChar() -> Character? {
         guard charIndex < charResponses.count else { return nil }
         let char = charResponses[charIndex]

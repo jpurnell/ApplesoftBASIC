@@ -55,6 +55,7 @@ public final class Environment: @unchecked Sendable {
     /// User-defined functions from DEF FN.
     var userFunctions: [String: UserFunction] = [:]
 
+    /// Creates an empty runtime environment.
     public init() {}
 
     /// Resets all state.

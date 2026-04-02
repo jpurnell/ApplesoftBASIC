@@ -13,18 +13,21 @@ public protocol OutputHandler: AnyObject, Sendable {
 /// Default output handler that writes to standard output.
 public final class ConsoleOutput: OutputHandler, @unchecked Sendable {
 
+    /// Creates a console output handler that writes to stdout.
     public init() {}
 
+    /// Writes text to stdout without a trailing newline.
     public func print(_ text: String) {
         Swift.print(text, terminator: "")
     }
 
+    /// Writes text to stdout followed by a newline.
     public func printLine(_ text: String) {
         Swift.print(text)
     }
 
+    /// Clears the terminal using ANSI escape sequences.
     public func clearScreen() {
-        // ANSI escape: clear screen and move cursor to top-left
         Swift.print("\u{1B}[2J\u{1B}[H", terminator: "")
     }
 }
@@ -39,23 +42,26 @@ public final class CapturedOutput: OutputHandler, @unchecked Sendable {
         guard !text.isEmpty else { return [] }
         let result = text.split(separator: "\n", omittingEmptySubsequences: false)
             .map(String.init)
-        // If text ends with newline, the last empty element is trailing
         if text.hasSuffix("\n") {
             return Array(result.dropLast())
         }
         return result
     }
 
+    /// Creates an empty captured output buffer.
     public init() {}
 
+    /// Appends text to the buffer.
     public func print(_ text: String) {
         self.text += text
     }
 
+    /// Appends text plus a newline to the buffer.
     public func printLine(_ text: String) {
         self.text += text + "\n"
     }
 
+    /// Clears the buffer (simulates HOME).
     public func clearScreen() {
         self.text = ""
     }
