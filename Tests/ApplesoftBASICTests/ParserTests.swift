@@ -143,37 +143,36 @@ struct ParserTests {
     @Test("Parses IF...THEN with GOTO")
     func ifThenGoto() throws {
         let program = try parse("10 IF A = 50 THEN GOTO 250")
-        if case .ifThen(_, let body) = program.lines[0].statements[0] {
-            if case .statement(let stmt) = body {
-                if case .goto = stmt {
-                    // pass
-                } else {
-                    Issue.record("Expected GOTO in IF body")
-                }
-            } else {
-                Issue.record("Expected statement body")
-            }
-        } else {
+        guard case .ifThen(_, let body) = program.lines[0].statements[0] else {
             Issue.record("Expected IF...THEN statement")
+            return
+        }
+        guard case .statement(let stmt) = body else {
+            Issue.record("Expected statement body")
+            return
+        }
+        if case .goto(let target) = stmt {
+            #expect(target == .numberLiteral(250))
+        } else {
+            Issue.record("Expected GOTO in IF body")
         }
     }
 
     @Test("Parses IF...THEN with inline statement")
     func ifThenStatement() throws {
         let program = try parse("10 IF X > 0 THEN PRINT \"POSITIVE\"")
-        if case .ifThen(_, let body) = program.lines[0].statements[0] {
-            if case .statement(let stmt) = body {
-                if case .print = stmt {
-                    // pass
-                } else {
-                    Issue.record("Expected PRINT in IF body")
-                }
-            } else {
-                Issue.record("Expected statement body")
-            }
-        } else {
+        guard case .ifThen(_, let body) = program.lines[0].statements[0] else {
             Issue.record("Expected IF...THEN statement")
+            return
         }
+        guard case .statement(let stmt) = body else {
+            Issue.record("Expected statement body")
+            return
+        }
+        #expect({
+            if case .print = stmt { return true }
+            return false
+        }())
     }
 
     @Test("Parses FOR...NEXT loop")
@@ -294,11 +293,10 @@ struct ParserTests {
     @Test("Parses RESTORE")
     func restoreStatement() throws {
         let program = try parse("10 RESTORE")
-        if case .restore = program.lines[0].statements[0] {
-            // pass
-        } else {
-            Issue.record("Expected RESTORE statement")
-        }
+        #expect({
+            if case .restore = program.lines[0].statements[0] { return true }
+            return false
+        }())
     }
 
     @Test("Parses ON...GOTO")
@@ -335,21 +333,19 @@ struct ParserTests {
     @Test("Parses HOME")
     func homeStatement() throws {
         let program = try parse("10 HOME")
-        if case .home = program.lines[0].statements[0] {
-            // pass
-        } else {
-            Issue.record("Expected HOME statement")
-        }
+        #expect({
+            if case .home = program.lines[0].statements[0] { return true }
+            return false
+        }())
     }
 
     @Test("Parses END")
     func endStatement() throws {
         let program = try parse("10 END")
-        if case .end = program.lines[0].statements[0] {
-            // pass
-        } else {
-            Issue.record("Expected END statement")
-        }
+        #expect({
+            if case .end = program.lines[0].statements[0] { return true }
+            return false
+        }())
     }
 
     // MARK: - Expressions
@@ -437,15 +433,14 @@ struct ParserTests {
     @Test("Parses logical operators")
     func logicalOperators() throws {
         let program = try parse("10 IF A > 0 AND B > 0 THEN 100")
-        if case .ifThen(let condition, _) = program.lines[0].statements[0] {
-            if case .and = condition {
-                // pass
-            } else {
-                Issue.record("Expected AND expression")
-            }
-        } else {
+        guard case .ifThen(let condition, _) = program.lines[0].statements[0] else {
             Issue.record("Expected IF...THEN statement")
+            return
         }
+        #expect({
+            if case .and = condition { return true }
+            return false
+        }())
     }
 
     @Test("Parses NOT operator")

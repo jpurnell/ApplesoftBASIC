@@ -2,6 +2,7 @@
 ///
 /// Stores variables, arrays, DATA values, the GOSUB return stack,
 /// FOR loop state, and user-defined functions.
+// Justification: All mutations occur on a single thread within the interpreter run loop; no concurrent access.
 public final class Environment: @unchecked Sendable {
 
     /// Maximum number of variables allowed.
@@ -58,17 +59,11 @@ public final class Environment: @unchecked Sendable {
     /// Creates an empty runtime environment.
     public init() {}
 
-    /// Resets all state.
-    func reset() {
-        numericVariables.removeAll()
-        stringVariables.removeAll()
-        numericArrays.removeAll()
-        stringArrays.removeAll()
-        dataValues.removeAll()
-        dataPointer = 0
-        gosubStack.removeAll()
-        forLoops.removeAll()
-        userFunctions.removeAll()
+    /// Creates an environment pre-populated with DATA values.
+    ///
+    /// - Parameter dataValues: The DATA values collected from the program.
+    init(dataValues: [DataValue]) {
+        self.dataValues = dataValues
     }
 }
 

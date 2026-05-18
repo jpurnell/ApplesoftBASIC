@@ -1,4 +1,4 @@
-// swift-tools-version: 6.0
+// swift-tools-version: 6.2
 import PackageDescription
 
 let package = Package(
@@ -12,6 +12,9 @@ let package = Package(
             name: "ApplesoftBASICLib",
             targets: ["ApplesoftBASICLib"]
         ),
+    ],
+    dependencies: [
+        .package(url: "https://github.com/swiftlang/swift-docc-plugin", from: "1.4.3"),
     ],
     targets: [
         .target(

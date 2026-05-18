@@ -5,6 +5,7 @@ import Foundation
 /// The interpreter walks the AST produced by the ``Parser``, maintaining
 /// program state (variables, DATA pointer, call stack) and producing
 /// output through the ``OutputHandler`` protocol.
+// Justification: All mutable state is confined to the run() call on a single thread; no concurrent access.
 public final class Interpreter: @unchecked Sendable {
     private let program: Program
     private let output: any OutputHandler
@@ -36,12 +37,14 @@ public final class Interpreter: @unchecked Sendable {
     ///   - sound: Handler for BEEP/SOUND. Defaults to ``MutedSoundHandler``.
     ///   - maxSteps: Maximum execution steps before throwing
     ///     ``BASICError/stepCountExceeded(limit:)``. Defaults to 1,000,000.
+    ///   - rng: Random number generator for RND(). Defaults to `SystemRandomNumberGenerator`.
     public init(
         program: Program,
         output: any OutputHandler = ConsoleOutput(),
         input: any InputHandler = ConsoleInput(),
         sound: any SoundHandler = MutedSoundHandler(),
-        maxSteps: Int = 1_000_000
+        maxSteps: Int = 1_000_000,
+        rng: any RandomNumberGenerator = SystemRandomNumberGenerator()
     ) {
         self.program = program
         self.output = output
@@ -50,7 +53,7 @@ public final class Interpreter: @unchecked Sendable {
         self.maxSteps = maxSteps
         self.environment = Environment()
         self.graphicsBuffer = GraphicsBuffer()
-        self.rng = SystemRandomNumberGenerator()
+        self.rng = rng
     }
 
     /// Runs the program from the first line.
@@ -118,13 +121,6 @@ public final class Interpreter: @unchecked Sendable {
         }
         lineIndex = index
         statementIndex = 0
-    }
-
-    private func findLineIndex(_ targetLine: Int) throws -> Int {
-        guard let index = program.lines.firstIndex(where: { $0.lineNumber == targetLine }) else {
-            throw BASICError.undefinedLine(targetLine)
-        }
-        return index
     }
 
     // MARK: - Statement Execution

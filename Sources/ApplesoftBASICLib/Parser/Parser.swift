@@ -664,17 +664,15 @@ public struct Parser: Sendable {
     private mutating func parseAddition() throws -> Expression {
         var left = try parseMultiplication()
 
-        while true {
+        while peek() == .op(.plus) || peek() == .op(.minus) {
             if peek() == .op(.plus) {
                 advance()
                 let right = try parseMultiplication()
                 left = .binary(left: left, op: .plus, right: right)
-            } else if peek() == .op(.minus) {
+            } else {
                 advance()
                 let right = try parseMultiplication()
                 left = .binary(left: left, op: .minus, right: right)
-            } else {
-                break
             }
         }
 
@@ -684,17 +682,15 @@ public struct Parser: Sendable {
     private mutating func parseMultiplication() throws -> Expression {
         var left = try parsePower()
 
-        while true {
+        while peek() == .op(.multiply) || peek() == .op(.divide) {
             if peek() == .op(.multiply) {
                 advance()
                 let right = try parsePower()
                 left = .binary(left: left, op: .multiply, right: right)
-            } else if peek() == .op(.divide) {
+            } else {
                 advance()
                 let right = try parsePower()
                 left = .binary(left: left, op: .divide, right: right)
-            } else {
-                break
             }
         }
 

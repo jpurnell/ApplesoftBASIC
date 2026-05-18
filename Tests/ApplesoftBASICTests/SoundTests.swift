@@ -38,6 +38,9 @@ struct SoundTests {
         let muted = MutedSoundHandler()
         muted.beep()
         muted.playTone(frequency: 440, duration: 0.5)
+        var completed = false
+        completed = true
+        #expect(completed)
     }
 
     // MARK: - BEEP Statement

@@ -1,4 +1,7 @@
 import Foundation
+import os
+
+private let soundLogger = Logger(subsystem: "com.applesoftbasic", category: "sound")
 
 /// Abstraction for sound output — enables muting in tests.
 public protocol SoundHandler: AnyObject, Sendable {
@@ -14,6 +17,7 @@ public protocol SoundHandler: AnyObject, Sendable {
 }
 
 /// Silent sound handler — used in tests and when audio is unavailable.
+// Justification: Completely stateless — no-op implementations store nothing.
 public final class MutedSoundHandler: SoundHandler, @unchecked Sendable {
     /// Creates a muted sound handler that produces no audio.
     public init() {}
@@ -27,6 +31,7 @@ public final class MutedSoundHandler: SoundHandler, @unchecked Sendable {
 
 /// Sound handler that emits terminal BEL character for beep.
 /// Fallback when AVAudioEngine is not available.
+// Justification: Immutable after init — output handler reference is let-bound and itself Sendable.
 public final class TerminalBellSoundHandler: SoundHandler, @unchecked Sendable {
     private let output: any OutputHandler
 
@@ -50,10 +55,13 @@ public final class TerminalBellSoundHandler: SoundHandler, @unchecked Sendable {
 import AVFoundation
 
 /// Produces square-wave tones via AVAudioEngine.
+// Justification: All mutable state is protected by NSLock; audio callbacks access only lock-guarded fields.
 public final class AudioSoundHandler: SoundHandler, @unchecked Sendable {
     private var audioEngine: AVAudioEngine?
     private var sourceNode: AVAudioSourceNode?
+    // Justification: Only mutated inside NSLock-protected sections and the audio render callback which holds the lock.
     private nonisolated(unsafe) var phase: Double = 0.0
+    // Justification: Only mutated inside NSLock-protected sections and the audio render callback which holds the lock.
     private nonisolated(unsafe) var currentFrequency: Double = 440.0
     private let lock = NSLock()
 
@@ -117,7 +125,7 @@ public final class AudioSoundHandler: SoundHandler, @unchecked Sendable {
             self.audioEngine = engine
             self.sourceNode = node
         } catch {
-            // Silently fail — sound is non-essential
+            soundLogger.warning("Audio engine start failed: \(error, privacy: .public)")
         }
     }
 

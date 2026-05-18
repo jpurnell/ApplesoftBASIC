@@ -61,6 +61,7 @@ public enum Keyword: String, Sendable, CaseIterable {
     case BEEP, SOUND
 
     // Commands
+    // LIVE: RUN, LIST, NEW, DEL are matched via Keyword(rawValue:) in the lexer for BASIC source containing these commands.
     case RUN, LIST, NEW, DEL, CLR
     case REM
 

@@ -1,0 +1,5 @@
+consistency:
+  corpusPath: /Users/jpurnell/Dropbox/Computer/Development/Swift/Tools/org-judgement-corpus
+  projectID: ApplesoftBASIC
+  consistencyThreshold: 0.7
+  defaultRiskTier: 2

@@ -163,8 +163,10 @@ public struct GraphicsRenderer: Sendable {
         }
 
         // Unicode braille base: U+2800
-        let scalar = Unicode.Scalar(0x2800 + UInt32(brailleValue))
-        let char = Character(scalar!)
+        guard let scalar = Unicode.Scalar(0x2800 + UInt32(brailleValue)) else {
+            return (" ", nil)
+        }
+        let char = Character(scalar)
 
         if brailleValue == 0 {
             return (" ", nil) // All black — use space, no color

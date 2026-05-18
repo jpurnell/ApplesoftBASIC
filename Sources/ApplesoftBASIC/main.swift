@@ -1,8 +1,11 @@
 import Foundation
+import os
 import ApplesoftBASICLib
 #if canImport(CLineEditor)
 import CLineEditor
 #endif
+
+private let logger = Logger(subsystem: "com.applesoftbasic", category: "repl")
 
 /// Applesoft BASIC Interpreter — CLI entry point.
 ///
@@ -25,17 +28,19 @@ func main() {
 // MARK: - File Execution
 
 func runFile(_ filename: String) {
-    let path = (filename as NSString).expandingTildeInPath
-    guard FileManager.default.fileExists(atPath: path) else {
-        printError("?FILE NOT FOUND: \(filename)")
+    let fileURL = URL(fileURLWithPath: (filename as NSString).expandingTildeInPath).standardized
+    guard !fileURL.pathComponents.contains("..") else {
+        replOutput("?INVALID PATH: \(filename)")
         return
     }
-    guard let source = try? String(contentsOfFile: path, encoding: .utf8) else {
-        printError("?UNABLE TO READ: \(filename)")
+    // silent: reachability check only — failure is handled by the guard
+    guard (try? fileURL.checkResourceIsReachable()) == true else {
+        replOutput("?FILE NOT FOUND: \(filename)")
         return
     }
-
     do {
+        let source = try String(contentsOf: fileURL, encoding: .utf8)
+
         var lexer = Lexer(source: source)
         let tokens = try lexer.tokenize()
         var parser = Parser(tokens: tokens)
@@ -48,9 +53,9 @@ func runFile(_ filename: String) {
         let interpreter = Interpreter(program: program, sound: sound)
         try interpreter.run()
     } catch let error as BASICError {
-        printError(error.applesoftMessage)
+        logger.error("\(error.applesoftMessage, privacy: .public)")
     } catch {
-        printError("?ERROR: \(error)")
+        logger.error("?ERROR: \(error, privacy: .public)")
     }
 }
 
@@ -75,10 +80,16 @@ func readLineWithEditor(prompt: String) -> String? {
     #endif
 }
 
+// MARK: - REPL Output
+
+func replOutput(_ text: String) {
+    Swift.print(text)
+}
+
 // MARK: - REPL
 
 func runREPL() {
-    print("""
+    replOutput("""
     APPLESOFT BASIC INTERPRETER v\(ApplesoftBASICLib.version)
     SWIFT EDITION — APPLE'S 50TH BIRTHDAY
     \(memorySizeMessage())
@@ -86,12 +97,13 @@ func runREPL() {
     """)
 
     var programLines: [Int: String] = [:]
+    var running = true
 
-    while true {
+    while running {
         guard let line = readLineWithEditor(prompt: "]") else {
-            // Ctrl+D: exit gracefully
-            print()
-            break
+            replOutput("")
+            running = false
+            continue
         }
 
         let trimmed = line.trimmingCharacters(in: .whitespaces)
@@ -114,7 +126,7 @@ func runREPL() {
         }
         if upper == "NEW" {
             programLines.removeAll()
-            print()
+            replOutput("")
             continue
         }
         if upper.hasPrefix("DEL ") {
@@ -122,7 +134,8 @@ func runREPL() {
             continue
         }
         if upper == "BYE" || upper == "QUIT" || upper == "EXIT" {
-            break
+            running = false
+            continue
         }
 
         // Check if it starts with a line number
@@ -158,7 +171,7 @@ func runProgram(_ programLines: [Int: String]) {
         .joined(separator: "\n")
 
     guard !source.isEmpty else {
-        print()
+        replOutput("")
         return
     }
 
@@ -170,9 +183,9 @@ func runProgram(_ programLines: [Int: String]) {
         let interpreter = Interpreter(program: program)
         try interpreter.run()
     } catch let error as BASICError {
-        printError(error.applesoftMessage)
+        logger.error("\(error.applesoftMessage, privacy: .public)")
     } catch {
-        printError("?ERROR: \(error)")
+        logger.error("?ERROR: \(error, privacy: .public)")
     }
 }
 
@@ -186,17 +199,17 @@ func listProgram(_ programLines: [Int: String], range: String? = nil) {
 
         for key in sortedKeys where key >= start && key <= end {
             if let line = programLines[key] {
-                print(line)
+                replOutput(line)
             }
         }
     } else {
         for key in sortedKeys {
             if let line = programLines[key] {
-                print(line)
+                replOutput(line)
             }
         }
     }
-    print()
+    replOutput("")
 }
 
 func deleteLines(_ programLines: inout [Int: String], range: String) {
@@ -220,18 +233,14 @@ func executeDirect(_ line: String, programLines: [Int: String]) {
         let interpreter = Interpreter(program: program)
         try interpreter.run()
     } catch let error as BASICError {
-        printError(error.applesoftMessage)
+        logger.error("\(error.applesoftMessage, privacy: .public)")
     } catch {
-        printError("?ERROR: \(error)")
+        logger.error("?ERROR: \(error, privacy: .public)")
     }
 }
 
 func memorySizeMessage() -> String {
     "\(48 * 1024) BYTES FREE"  // Classic Apple II had 48K
-}
-
-func printError(_ message: String) {
-    print(message)
 }
 
 // MARK: - Entry Point

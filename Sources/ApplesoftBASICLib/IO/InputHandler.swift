@@ -8,6 +8,7 @@ public protocol InputHandler: AnyObject, Sendable {
 }
 
 /// Default input handler that reads from standard input.
+// Justification: Stateless — all methods delegate to Swift.readLine() which is thread-safe.
 public final class ConsoleInput: InputHandler, @unchecked Sendable {
 
     /// Creates a console input handler that reads from stdin.
@@ -30,6 +31,7 @@ public final class ConsoleInput: InputHandler, @unchecked Sendable {
 }
 
 /// Test double that provides scripted input responses.
+// Justification: Only used within single-threaded test execution; no concurrent access.
 public final class ScriptedInput: InputHandler, @unchecked Sendable {
     private var responses: [String]
     private var charResponses: [Character]
