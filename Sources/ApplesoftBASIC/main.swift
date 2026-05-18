@@ -12,22 +12,22 @@ private let logger = Logger(subsystem: "com.applesoftbasic", category: "repl")
 /// Usage:
 ///   applesoft              — Launch interactive REPL
 ///   applesoft filename.bas — Execute a BASIC program file
-func main() {
+func main<RNG: RandomNumberGenerator>(rng: inout RNG) {
     let args = CommandLine.arguments
 
     if args.count > 1 {
         // File mode
         let filename = args[1]
-        runFile(filename)
+        runFile(filename, rng: &rng)
     } else {
         // REPL mode
-        runREPL()
+        runREPL(rng: &rng)
     }
 }
 
 // MARK: - File Execution
 
-func runFile(_ filename: String) {
+func runFile<RNG: RandomNumberGenerator>(_ filename: String, rng: inout RNG) {
     let fileURL = URL(fileURLWithPath: (filename as NSString).expandingTildeInPath).standardized
     guard !fileURL.pathComponents.contains("..") else {
         replOutput("?INVALID PATH: \(filename)")
@@ -50,7 +50,7 @@ func runFile(_ filename: String) {
         #else
         let sound: any SoundHandler = MutedSoundHandler()
         #endif
-        let interpreter = Interpreter(program: program, sound: sound)
+        let interpreter = Interpreter(program: program, sound: sound, rng: &rng)
         try interpreter.run()
     } catch let error as BASICError {
         logger.error("\(error.applesoftMessage, privacy: .public)")
@@ -88,7 +88,7 @@ func replOutput(_ text: String) {
 
 // MARK: - REPL
 
-func runREPL() {
+func runREPL<RNG: RandomNumberGenerator>(rng: inout RNG) {
     replOutput("""
     APPLESOFT BASIC INTERPRETER v\(ApplesoftBASICLib.version)
     SWIFT EDITION — APPLE'S 50TH BIRTHDAY
@@ -113,7 +113,7 @@ func runREPL() {
         let upper = trimmed.uppercased()
 
         if upper == "RUN" {
-            runProgram(programLines)
+            runProgram(programLines, rng: &rng)
             continue
         }
         if upper == "LIST" {
@@ -161,11 +161,11 @@ func runREPL() {
         }
 
         // Direct execution (no line number)
-        executeDirect(trimmed, programLines: programLines)
+        executeDirect(trimmed, programLines: programLines, rng: &rng)
     }
 }
 
-func runProgram(_ programLines: [Int: String]) {
+func runProgram<RNG: RandomNumberGenerator>(_ programLines: [Int: String], rng: inout RNG) {
     let source = programLines.keys.sorted()
         .compactMap { programLines[$0] }
         .joined(separator: "\n")
@@ -180,7 +180,7 @@ func runProgram(_ programLines: [Int: String]) {
         let tokens = try lexer.tokenize()
         var parser = Parser(tokens: tokens)
         let program = try parser.parse()
-        let interpreter = Interpreter(program: program)
+        let interpreter = Interpreter(program: program, rng: &rng)
         try interpreter.run()
     } catch let error as BASICError {
         logger.error("\(error.applesoftMessage, privacy: .public)")
@@ -222,7 +222,7 @@ func deleteLines(_ programLines: inout [Int: String], range: String) {
     }
 }
 
-func executeDirect(_ line: String, programLines: [Int: String]) {
+func executeDirect<RNG: RandomNumberGenerator>(_ line: String, programLines: [Int: String], rng: inout RNG) {
     // Wrap in a dummy line number for parsing
     let source = "0 \(line)"
     do {
@@ -230,7 +230,7 @@ func executeDirect(_ line: String, programLines: [Int: String]) {
         let tokens = try lexer.tokenize()
         var parser = Parser(tokens: tokens)
         let program = try parser.parse()
-        let interpreter = Interpreter(program: program)
+        let interpreter = Interpreter(program: program, rng: &rng)
         try interpreter.run()
     } catch let error as BASICError {
         logger.error("\(error.applesoftMessage, privacy: .public)")
@@ -245,4 +245,5 @@ func memorySizeMessage() -> String {
 
 // MARK: - Entry Point
 
-main()
+var entryRNG: SystemRandomNumberGenerator = .init()
+main(rng: &entryRNG)

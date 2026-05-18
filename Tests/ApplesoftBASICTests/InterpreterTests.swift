@@ -13,11 +13,13 @@ struct InterpreterTests {
         let program = try parser.parse()
         let output = CapturedOutput()
         let scriptedInput = ScriptedInput(responses: input)
+        var rng = SeededGenerator(seed: 42)
         let interpreter = Interpreter(
             program: program,
             output: output,
             input: scriptedInput,
-            maxSteps: maxSteps
+            maxSteps: maxSteps,
+            rng: &rng
         )
         try interpreter.run()
         return output

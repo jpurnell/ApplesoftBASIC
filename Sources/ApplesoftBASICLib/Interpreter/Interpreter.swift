@@ -37,14 +37,14 @@ public final class Interpreter: @unchecked Sendable {
     ///   - sound: Handler for BEEP/SOUND. Defaults to ``MutedSoundHandler``.
     ///   - maxSteps: Maximum execution steps before throwing
     ///     ``BASICError/stepCountExceeded(limit:)``. Defaults to 1,000,000.
-    ///   - rng: Random number generator for RND(). Defaults to `SystemRandomNumberGenerator`.
-    public init(
+    ///   - rng: Random number generator for RND(). Inject a seeded generator for deterministic tests.
+    public init<RNG: RandomNumberGenerator>(
         program: Program,
         output: any OutputHandler = ConsoleOutput(),
         input: any InputHandler = ConsoleInput(),
         sound: any SoundHandler = MutedSoundHandler(),
         maxSteps: Int = 1_000_000,
-        rng: any RandomNumberGenerator = SystemRandomNumberGenerator()
+        rng: inout RNG
     ) {
         self.program = program
         self.output = output

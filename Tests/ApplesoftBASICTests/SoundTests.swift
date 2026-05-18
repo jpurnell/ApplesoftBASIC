@@ -23,9 +23,11 @@ struct SoundTests {
         var parser = Parser(tokens: tokens)
         let program = try parser.parse()
         let output = CapturedOutput()
+        var rng = SeededGenerator(seed: 42)
         let interpreter = Interpreter(
             program: program, output: output,
-            input: ScriptedInput(), sound: sound
+            input: ScriptedInput(), sound: sound,
+            rng: &rng
         )
         try interpreter.run()
         return (output, sound)

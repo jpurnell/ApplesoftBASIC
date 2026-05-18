@@ -13,9 +13,11 @@ struct GraphicsTests {
         var parser = Parser(tokens: tokens)
         let program = try parser.parse()
         let output = CapturedOutput()
+        var rng = SeededGenerator(seed: 42)
         let interpreter = Interpreter(
             program: program, output: output,
-            input: ScriptedInput(), maxSteps: maxSteps
+            input: ScriptedInput(), maxSteps: maxSteps,
+            rng: &rng
         )
         try interpreter.run()
         return output
