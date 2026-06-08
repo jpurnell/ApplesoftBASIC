@@ -1,5 +1,5 @@
 /// A deterministic PRNG for reproducible tests (SplitMix64 algorithm).
-struct SeededGenerator: RandomNumberGenerator {
+struct SeededGenerator: RandomNumberGenerator, Sendable {
     private var state: UInt64
 
     init(seed: UInt64) {

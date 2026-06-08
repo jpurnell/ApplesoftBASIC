@@ -1,9 +1,10 @@
+import Synchronization
+
 /// Runtime environment for the BASIC interpreter.
 ///
 /// Stores variables, arrays, DATA values, the GOSUB return stack,
 /// FOR loop state, and user-defined functions.
-// Justification: Environment is only mutated by a single Interpreter.run() invocation; variables, arrays, and control-flow stacks are written sequentially during statement execution with no concurrent callers.
-public final class Environment: @unchecked Sendable {
+public final class Environment: Sendable {
 
     /// Maximum number of variables allowed.
     public static let maxVariables = 1_000
@@ -17,54 +18,74 @@ public final class Environment: @unchecked Sendable {
     /// Maximum total DATA items.
     public static let maxDataItems = 10_000
 
-    // MARK: - Variable Storage
+    /// All mutable interpreter state, protected by a single lock.
+    struct State: Sendable {
+        // MARK: - Variable Storage
+        /// Numeric variables (A, X1, etc.).
+        var numericVariables: [String: Double] = [:]
+        /// String variables (A$, N$, etc.).
+        var stringVariables: [String: String] = [:]
 
-    /// Numeric variables (A, X1, etc.).
-    var numericVariables: [String: Double] = [:]
+        // MARK: - Arrays
+        /// Numeric arrays, keyed by name with flat storage and dimension sizes.
+        var numericArrays: [String: BASICArray] = [:]
+        /// String arrays.
+        var stringArrays: [String: BASICStringArray] = [:]
 
-    /// String variables (A$, N$, etc.).
-    var stringVariables: [String: String] = [:]
+        // MARK: - DATA / READ
+        /// All DATA values collected from the program.
+        var dataValues: [DataValue] = []
+        /// Current position in the DATA list for READ.
+        var dataPointer: Int = 0
 
-    // MARK: - Arrays
+        // MARK: - GOSUB Stack
+        /// Return addresses for GOSUB calls.
+        var gosubStack: [GosubEntry] = []
 
-    /// Numeric arrays, keyed by name with flat storage and dimension sizes.
-    var numericArrays: [String: BASICArray] = [:]
+        // MARK: - FOR Loop Stack
+        /// Active FOR loops, keyed by variable name.
+        var forLoops: [String: ForLoopState] = [:]
 
-    /// String arrays.
-    var stringArrays: [String: BASICStringArray] = [:]
+        // MARK: - User-Defined Functions
+        /// User-defined functions from DEF FN.
+        var userFunctions: [String: UserFunction] = [:]
+    }
 
-    // MARK: - DATA / READ
-
-    /// All DATA values collected from the program.
-    var dataValues: [DataValue] = []
-
-    /// Current position in the DATA list for READ.
-    var dataPointer: Int = 0
-
-    // MARK: - GOSUB Stack
-
-    /// Return addresses for GOSUB calls: (lineIndex, statementIndex).
-    var gosubStack: [(lineIndex: Int, statementIndex: Int)] = []
-
-    // MARK: - FOR Loop Stack
-
-    /// Active FOR loops, keyed by variable name.
-    var forLoops: [String: ForLoopState] = [:]
-
-    // MARK: - User-Defined Functions
-
-    /// User-defined functions from DEF FN.
-    var userFunctions: [String: UserFunction] = [:]
+    private let _state: Mutex<State>
 
     /// Creates an empty runtime environment.
-    public init() {}
+    public init() {
+        _state = Mutex(State())
+    }
 
     /// Creates an environment pre-populated with DATA values.
     ///
     /// - Parameter dataValues: The DATA values collected from the program.
     init(dataValues: [DataValue]) {
-        self.dataValues = dataValues
+        var s = State()
+        s.dataValues = dataValues
+        _state = Mutex(s)
     }
+
+    /// Provides exclusive access to all mutable environment state.
+    func withState<R>(_ body: (inout State) throws -> R) throws -> R {
+        try _state.withLock { state in
+            try body(&state)
+        }
+    }
+
+    /// Provides exclusive non-throwing access to all mutable environment state.
+    func withState<R>(_ body: (inout State) -> R) -> R {
+        _state.withLock { state in
+            body(&state)
+        }
+    }
+}
+
+/// A GOSUB return address entry.
+struct GosubEntry: Sendable {
+    let lineIndex: Int
+    let statementIndex: Int
 }
 
 /// Storage for a numeric BASIC array.

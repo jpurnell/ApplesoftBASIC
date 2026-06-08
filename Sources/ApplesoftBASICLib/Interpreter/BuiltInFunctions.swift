@@ -14,7 +14,7 @@ enum BuiltInFunctions {
     static func evaluateNumeric(
         name: String,
         args: [Double],
-        rng: inout any RandomNumberGenerator
+        rng: inout any RandomNumberGenerator & Sendable
     ) throws -> Double {
         guard let firstArg = args.first else {
             throw BASICError.illegalQuantity(0)

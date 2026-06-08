@@ -1,3 +1,5 @@
+import Synchronization
+
 /// Abstraction for user input — enables scripted input in tests.
 public protocol InputHandler: AnyObject, Sendable {
     /// Reads a line of input, optionally displaying a prompt.
@@ -8,8 +10,7 @@ public protocol InputHandler: AnyObject, Sendable {
 }
 
 /// Default input handler that reads from standard input.
-// Justification: ConsoleInput holds no stored properties; every method delegates directly to Swift.readLine() which is inherently thread-safe.
-public final class ConsoleInput: InputHandler, @unchecked Sendable {
+public final class ConsoleInput: InputHandler, Sendable {
 
     /// Creates a console input handler that reads from stdin.
     public init() {}
@@ -31,15 +32,21 @@ public final class ConsoleInput: InputHandler, @unchecked Sendable {
 }
 
 /// Test double that provides scripted input responses.
-// Justification: ScriptedInput is instantiated per-test and accessed only from the test's main thread; its mutable response indices are never shared across threads.
-public final class ScriptedInput: InputHandler, @unchecked Sendable {
-    private var responses: [String]
-    private var charResponses: [Character]
-    private var responseIndex = 0
-    private var charIndex = 0
+public final class ScriptedInput: InputHandler, Sendable {
+    private struct State: Sendable {
+        var responses: [String]
+        var charResponses: [Character]
+        var responseIndex = 0
+        var charIndex = 0
+        var receivedPrompts: [String] = []
+    }
+
+    private let state: Mutex<State>
 
     /// The prompts that were displayed, for verification.
-    public private(set) var receivedPrompts: [String] = []
+    public var receivedPrompts: [String] {
+        state.withLock { $0.receivedPrompts }
+    }
 
     /// Creates a scripted input handler with predefined responses.
     ///
@@ -47,24 +54,27 @@ public final class ScriptedInput: InputHandler, @unchecked Sendable {
     ///   - responses: Responses to return for `readLine` calls, in order.
     ///   - charResponses: Characters to return for `getChar` calls, in order.
     public init(responses: [String] = [], charResponses: [Character] = []) {
-        self.responses = responses
-        self.charResponses = charResponses
+        self.state = Mutex(State(responses: responses, charResponses: charResponses))
     }
 
     /// Returns the next scripted response, or nil if exhausted.
     public func readLine(prompt: String) -> String? {
-        receivedPrompts.append(prompt)
-        guard responseIndex < responses.count else { return nil }
-        let response = responses[responseIndex]
-        responseIndex += 1
-        return response
+        state.withLock { s in
+            s.receivedPrompts.append(prompt)
+            guard s.responseIndex < s.responses.count else { return nil }
+            let response = s.responses[s.responseIndex]
+            s.responseIndex += 1
+            return response
+        }
     }
 
     /// Returns the next scripted character, or nil if exhausted.
     public func getChar() -> Character? {
-        guard charIndex < charResponses.count else { return nil }
-        let char = charResponses[charIndex]
-        charIndex += 1
-        return char
+        state.withLock { s in
+            guard s.charIndex < s.charResponses.count else { return nil }
+            let char = s.charResponses[s.charIndex]
+            s.charIndex += 1
+            return char
+        }
     }
 }

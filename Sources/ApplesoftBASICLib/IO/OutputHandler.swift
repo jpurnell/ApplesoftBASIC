@@ -1,3 +1,5 @@
+import Synchronization
+
 /// Abstraction for PRINT output — enables capturing output in tests.
 public protocol OutputHandler: AnyObject, Sendable {
     /// Prints text without a trailing newline.
@@ -11,8 +13,7 @@ public protocol OutputHandler: AnyObject, Sendable {
 }
 
 /// Default output handler that writes to standard output.
-// Justification: ConsoleOutput holds no stored properties; every method delegates directly to Swift.print() which serializes output internally.
-public final class ConsoleOutput: OutputHandler, @unchecked Sendable {
+public final class ConsoleOutput: OutputHandler, Sendable {
 
     /// Creates a console output handler that writes to stdout.
     public init() {}
@@ -34,17 +35,21 @@ public final class ConsoleOutput: OutputHandler, @unchecked Sendable {
 }
 
 /// Test double that captures all output for verification.
-// Justification: CapturedOutput is instantiated per-test and accessed only from the test's main thread; its mutable text buffer is never shared across threads.
-public final class CapturedOutput: OutputHandler, @unchecked Sendable {
+public final class CapturedOutput: OutputHandler, Sendable {
+    private let _text = Mutex<String>("")
+
     /// All text that has been output, in order.
-    public private(set) var text: String = ""
+    public var text: String {
+        _text.withLock { $0 }
+    }
 
     /// Each complete line that has been output.
     public var lines: [String] {
-        guard !text.isEmpty else { return [] }
-        let result = text.split(separator: "\n", omittingEmptySubsequences: false)
+        let current = text
+        guard !current.isEmpty else { return [] }
+        let result = current.split(separator: "\n", omittingEmptySubsequences: false)
             .map(String.init)
-        if text.hasSuffix("\n") {
+        if current.hasSuffix("\n") {
             return Array(result.dropLast())
         }
         return result
@@ -55,16 +60,16 @@ public final class CapturedOutput: OutputHandler, @unchecked Sendable {
 
     /// Appends text to the buffer.
     public func print(_ text: String) {
-        self.text += text
+        _text.withLock { $0 += text }
     }
 
     /// Appends text plus a newline to the buffer.
     public func printLine(_ text: String) {
-        self.text += text + "\n"
+        _text.withLock { $0 += text + "\n" }
     }
 
     /// Clears the buffer (simulates HOME).
     public func clearScreen() {
-        self.text = ""
+        _text.withLock { $0 = "" }
     }
 }

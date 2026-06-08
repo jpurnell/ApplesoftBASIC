@@ -1,5 +1,6 @@
 import Foundation
 import os
+import Synchronization
 
 private let soundLogger = Logger(subsystem: "com.applesoftbasic", category: "sound")
 
@@ -17,8 +18,7 @@ public protocol SoundHandler: AnyObject, Sendable {
 }
 
 /// Silent sound handler — used in tests and when audio is unavailable.
-// Justification: MutedSoundHandler holds no stored properties; beep() and playTone() are empty no-ops with no side effects or shared state.
-public final class MutedSoundHandler: SoundHandler, @unchecked Sendable {
+public final class MutedSoundHandler: SoundHandler, Sendable {
     /// Creates a muted sound handler that produces no audio.
     public init() {}
 
@@ -31,8 +31,7 @@ public final class MutedSoundHandler: SoundHandler, @unchecked Sendable {
 
 /// Sound handler that emits terminal BEL character for beep.
 /// Fallback when AVAudioEngine is not available.
-// Justification: TerminalBellSoundHandler is immutable after init; the output property is let-bound and OutputHandler requires Sendable conformance.
-public final class TerminalBellSoundHandler: SoundHandler, @unchecked Sendable {
+public final class TerminalBellSoundHandler: SoundHandler, Sendable {
     private let output: any OutputHandler
 
     /// Creates a terminal bell sound handler.
@@ -52,18 +51,25 @@ public final class TerminalBellSoundHandler: SoundHandler, @unchecked Sendable {
 }
 
 #if canImport(AVFoundation)
-import AVFoundation
+@preconcurrency import AVFoundation
 
 /// Produces square-wave tones via AVAudioEngine.
-// Justification: AudioSoundHandler guards audioEngine, sourceNode, phase, and currentFrequency with NSLock; the render callback reads only lock-protected fields.
-public final class AudioSoundHandler: SoundHandler, @unchecked Sendable {
-    private var audioEngine: AVAudioEngine?
-    private var sourceNode: AVAudioSourceNode?
-    // Justification: phase is written in playTone() and incremented in the AVAudioSourceNode render callback; both code paths acquire self.lock before access.
-    private nonisolated(unsafe) var phase: Double = 0.0
-    // Justification: currentFrequency is set in playTone() under self.lock and read by the render callback which also acquires self.lock before generating samples.
-    private nonisolated(unsafe) var currentFrequency: Double = 440.0
-    private let lock = NSLock()
+public final class AudioSoundHandler: SoundHandler, Sendable {
+    /// Mutable state protected by a single Mutex.
+    // Justification: AVAudioEngine/AVAudioSourceNode are not Sendable but access is serialized by Mutex.
+    private struct EngineState: @unchecked Sendable {
+        var audioEngine: AVAudioEngine?
+        var sourceNode: AVAudioSourceNode?
+    }
+
+    /// Render state shared with the audio callback, protected by its own Mutex.
+    private struct RenderState: Sendable {
+        var phase: Double = 0.0
+        var currentFrequency: Double = 440.0
+    }
+
+    private let engineState = Mutex<EngineState>(EngineState())
+    private let renderState = Mutex<RenderState>(RenderState())
 
     /// Creates an audio sound handler using AVAudioEngine.
     public init() {}
@@ -79,10 +85,10 @@ public final class AudioSoundHandler: SoundHandler, @unchecked Sendable {
         let freq = max(20, min(frequency, 20000))
         let dur = max(0.001, min(duration, 30))
 
-        lock.lock()
-        currentFrequency = freq
-        phase = 0.0
-        lock.unlock()
+        renderState.withLock { s in
+            s.currentFrequency = freq
+            s.phase = 0.0
+        }
 
         startEngine()
         Thread.sleep(forTimeInterval: dur)
@@ -90,58 +96,58 @@ public final class AudioSoundHandler: SoundHandler, @unchecked Sendable {
     }
 
     private func startEngine() {
-        lock.lock()
-        defer { lock.unlock() }
+        engineState.withLock { es in
+            stopEngineUnsafe(&es)
 
-        stopEngineUnsafe()
+            let engine = AVAudioEngine()
+            let sampleRate = engine.outputNode.outputFormat(forBus: 0).sampleRate
+            let format = AVAudioFormat(standardFormatWithSampleRate: sampleRate, channels: 1)
+            guard let format else { return }
 
-        let engine = AVAudioEngine()
-        let sampleRate = engine.outputNode.outputFormat(forBus: 0).sampleRate
-        let format = AVAudioFormat(standardFormatWithSampleRate: sampleRate, channels: 1)
-        guard let format else { return }
+            let handler = self
+            let node = AVAudioSourceNode(format: format) { _, _, frameCount, bufferList -> OSStatus in
+                let ablPointer = UnsafeMutableAudioBufferListPointer(bufferList)
+                handler.renderState.withLock { rs in
+                    let increment = rs.currentFrequency / sampleRate
 
-        let node = AVAudioSourceNode(format: format) { [weak self] _, _, frameCount, bufferList -> OSStatus in
-            guard let self else { return noErr }
-            let ablPointer = UnsafeMutableAudioBufferListPointer(bufferList)
-            let freq = self.currentFrequency
-            let increment = freq / sampleRate
-
-            for frame in 0..<Int(frameCount) {
-                let sample: Float = self.phase < 0.5 ? 0.12 : -0.12
-                for buffer in ablPointer {
-                    buffer.mData?.assumingMemoryBound(to: Float.self)[frame] = sample
+                    for frame in 0..<Int(frameCount) {
+                        let sample: Float = rs.phase < 0.5 ? 0.12 : -0.12
+                        for buffer in ablPointer {
+                            buffer.mData?.assumingMemoryBound(to: Float.self)[frame] = sample
+                        }
+                        rs.phase += increment
+                        if rs.phase >= 1.0 { rs.phase -= 1.0 }
+                    }
                 }
-                self.phase += increment
-                if self.phase >= 1.0 { self.phase -= 1.0 }
+                return noErr
             }
-            return noErr
-        }
 
-        engine.attach(node)
-        engine.connect(node, to: engine.mainMixerNode, format: format)
+            engine.attach(node)
+            engine.connect(node, to: engine.mainMixerNode, format: format)
 
-        do {
-            try engine.start()
-            self.audioEngine = engine
-            self.sourceNode = node
-        } catch {
-            soundLogger.warning("Audio engine start failed: \(error, privacy: .public)")
+            do {
+                try engine.start()
+                es.audioEngine = engine
+                es.sourceNode = node
+            } catch {
+                soundLogger.warning("Audio engine start failed: \(error, privacy: .public)")
+            }
         }
     }
 
     private func stopEngine() {
-        lock.lock()
-        defer { lock.unlock() }
-        stopEngineUnsafe()
+        engineState.withLock { es in
+            stopEngineUnsafe(&es)
+        }
     }
 
-    private func stopEngineUnsafe() {
-        audioEngine?.stop()
-        if let node = sourceNode {
-            audioEngine?.detach(node)
+    private func stopEngineUnsafe(_ es: inout EngineState) {
+        es.audioEngine?.stop()
+        if let node = es.sourceNode {
+            es.audioEngine?.detach(node)
         }
-        sourceNode = nil
-        audioEngine = nil
+        es.sourceNode = nil
+        es.audioEngine = nil
     }
 }
 #endif

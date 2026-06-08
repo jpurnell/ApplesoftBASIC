@@ -1,131 +1,139 @@
 /// Renders the graphics buffer to terminal escape sequences.
 ///
-/// Lo-res uses Unicode half-block characters (`▀`) with 24-bit ANSI color.
+/// Lo-res uses Unicode half-block characters (`\u{2580}`) with 24-bit ANSI color.
 /// Hi-res uses Unicode braille characters with 24-bit ANSI color.
 public struct GraphicsRenderer: Sendable {
 
-    /// Renders the entire lo-res screen (40x48 → 40 cols x 24 rows).
+    /// Renders the entire lo-res screen (40x48 -> 40 cols x 24 rows).
     ///
     /// Each terminal character represents 2 vertical lo-res pixels using
-    /// the upper-half-block `▀` with foreground = top pixel, background = bottom pixel.
+    /// the upper-half-block `\u{2580}` with foreground = top pixel, background = bottom pixel.
     public static func renderLoRes(_ buffer: GraphicsBuffer) -> String {
-        var output = ""
-        // Move cursor to top-left
-        output += "\u{1B}[H"
+        buffer.withState { s in
+            var output = ""
+            // Move cursor to top-left
+            output += "\u{1B}[H"
 
-        for row in 0..<24 {
-            let topY = row * 2
-            let botY = topY + 1
-            for x in 0..<GraphicsBuffer.loResWidth {
-                let topColor = buffer.loResPixels[topY][x]
-                let botColor = buffer.loResPixels[botY][x]
-                let top = AppleIIColors.loRes[Int(topColor)]
-                let bot = AppleIIColors.loRes[Int(botColor)]
-                // Foreground = top pixel, background = bottom pixel
-                output += "\u{1B}[38;2;\(top.r);\(top.g);\(top.b)m"
-                output += "\u{1B}[48;2;\(bot.r);\(bot.g);\(bot.b)m"
-                output += "\u{2580}" // ▀
+            for row in 0..<24 {
+                let topY = row * 2
+                let botY = topY + 1
+                for x in 0..<GraphicsBuffer.loResWidth {
+                    let topColor = s.loResPixels[topY][x]
+                    let botColor = s.loResPixels[botY][x]
+                    let top = AppleIIColors.loRes[Int(topColor)]
+                    let bot = AppleIIColors.loRes[Int(botColor)]
+                    // Foreground = top pixel, background = bottom pixel
+                    output += "\u{1B}[38;2;\(top.r);\(top.g);\(top.b)m"
+                    output += "\u{1B}[48;2;\(bot.r);\(bot.g);\(bot.b)m"
+                    output += "\u{2580}" // upper half block
+                }
+                output += "\u{1B}[0m\n"
             }
-            output += "\u{1B}[0m\n"
+            return output
         }
-        return output
     }
 
     /// Renders only the dirty rows of the lo-res screen.
     public static func renderLoResDirty(_ buffer: GraphicsBuffer) -> String {
-        guard !buffer.dirtyLoResRows.isEmpty else { return "" }
+        buffer.withState { s in
+            guard !s.dirtyLoResRows.isEmpty else { return "" }
 
-        var output = ""
-        // Determine which terminal rows need updating
-        var dirtyTermRows: Set<Int> = []
-        for loResRow in buffer.dirtyLoResRows {
-            dirtyTermRows.insert(loResRow / 2)
-        }
-
-        for row in dirtyTermRows.sorted() {
-            let topY = row * 2
-            let botY = topY + 1
-            // Position cursor at this terminal row
-            output += "\u{1B}[\(row + 1);1H"
-            for x in 0..<GraphicsBuffer.loResWidth {
-                let topColor = buffer.loResPixels[topY][x]
-                let botColor = buffer.loResPixels[botY][x]
-                let top = AppleIIColors.loRes[Int(topColor)]
-                let bot = AppleIIColors.loRes[Int(botColor)]
-                output += "\u{1B}[38;2;\(top.r);\(top.g);\(top.b)m"
-                output += "\u{1B}[48;2;\(bot.r);\(bot.g);\(bot.b)m"
-                output += "\u{2580}"
+            var output = ""
+            // Determine which terminal rows need updating
+            var dirtyTermRows: Set<Int> = []
+            for loResRow in s.dirtyLoResRows {
+                dirtyTermRows.insert(loResRow / 2)
             }
-            output += "\u{1B}[0m"
+
+            for row in dirtyTermRows.sorted() {
+                let topY = row * 2
+                let botY = topY + 1
+                // Position cursor at this terminal row
+                output += "\u{1B}[\(row + 1);1H"
+                for x in 0..<GraphicsBuffer.loResWidth {
+                    let topColor = s.loResPixels[topY][x]
+                    let botColor = s.loResPixels[botY][x]
+                    let top = AppleIIColors.loRes[Int(topColor)]
+                    let bot = AppleIIColors.loRes[Int(botColor)]
+                    output += "\u{1B}[38;2;\(top.r);\(top.g);\(top.b)m"
+                    output += "\u{1B}[48;2;\(bot.r);\(bot.g);\(bot.b)m"
+                    output += "\u{2580}"
+                }
+                output += "\u{1B}[0m"
+            }
+            return output
         }
-        return output
     }
 
-    /// Renders the entire hi-res screen using braille characters (280x192 → 140 cols x 48 rows).
+    /// Renders the entire hi-res screen using braille characters (280x192 -> 140 cols x 48 rows).
     ///
     /// Each braille character encodes a 2x4 dot pattern. Non-black pixels are set as dots,
     /// colored with the most common non-black color in the 2x4 cell.
     public static func renderHiRes(_ buffer: GraphicsBuffer) -> String {
-        var output = ""
-        output += "\u{1B}[H"
+        buffer.withState { s in
+            var output = ""
+            output += "\u{1B}[H"
 
-        let maxY = buffer.mode == .hiResFull ? 192 : 160
+            let maxY = s.mode == .hiResFull ? 192 : 160
 
-        for cellRow in 0..<(maxY / 4) {
-            for cellCol in 0..<140 {
-                let (brailleChar, color) = hiResBrailleCell(
-                    buffer: buffer,
-                    cellCol: cellCol,
-                    cellRow: cellRow
-                )
-                if let color {
-                    output += "\u{1B}[38;2;\(color.r);\(color.g);\(color.b)m"
-                    output += String(brailleChar)
-                    output += "\u{1B}[0m"
-                } else {
-                    output += String(brailleChar)
+            for cellRow in 0..<(maxY / 4) {
+                for cellCol in 0..<140 {
+                    let (brailleChar, color) = hiResBrailleCell(
+                        state: s,
+                        cellCol: cellCol,
+                        cellRow: cellRow
+                    )
+                    if let color {
+                        output += "\u{1B}[38;2;\(color.r);\(color.g);\(color.b)m"
+                        output += String(brailleChar)
+                        output += "\u{1B}[0m"
+                    } else {
+                        output += String(brailleChar)
+                    }
                 }
+                output += "\n"
             }
-            output += "\n"
+            return output
         }
-        return output
     }
 
     /// Renders only dirty rows of the hi-res screen.
     public static func renderHiResDirty(_ buffer: GraphicsBuffer) -> String {
-        guard !buffer.dirtyHiResRows.isEmpty else { return "" }
+        buffer.withState { s in
+            guard !s.dirtyHiResRows.isEmpty else { return "" }
 
-        var output = ""
-        var dirtyCellRows: Set<Int> = []
-        for hiResRow in buffer.dirtyHiResRows {
-            dirtyCellRows.insert(hiResRow / 4)
-        }
+            var output = ""
+            var dirtyCellRows: Set<Int> = []
+            for hiResRow in s.dirtyHiResRows {
+                dirtyCellRows.insert(hiResRow / 4)
+            }
 
-        for cellRow in dirtyCellRows.sorted() {
-            output += "\u{1B}[\(cellRow + 1);1H"
-            for cellCol in 0..<140 {
-                let (brailleChar, color) = hiResBrailleCell(
-                    buffer: buffer,
-                    cellCol: cellCol,
-                    cellRow: cellRow
-                )
-                if let color {
-                    output += "\u{1B}[38;2;\(color.r);\(color.g);\(color.b)m"
-                    output += String(brailleChar)
-                    output += "\u{1B}[0m"
-                } else {
-                    output += String(brailleChar)
+            for cellRow in dirtyCellRows.sorted() {
+                output += "\u{1B}[\(cellRow + 1);1H"
+                for cellCol in 0..<140 {
+                    let (brailleChar, color) = hiResBrailleCell(
+                        state: s,
+                        cellCol: cellCol,
+                        cellRow: cellRow
+                    )
+                    if let color {
+                        output += "\u{1B}[38;2;\(color.r);\(color.g);\(color.b)m"
+                        output += String(brailleChar)
+                        output += "\u{1B}[0m"
+                    } else {
+                        output += String(brailleChar)
+                    }
                 }
             }
+            return output
         }
-        return output
     }
 
     // MARK: - Braille Helpers
 
     /// Computes the braille character and color for a 2x4 cell of hi-res pixels.
     private static func hiResBrailleCell(
-        buffer: GraphicsBuffer,
+        state s: GraphicsBuffer.State,
         cellCol: Int,
         cellRow: Int
     ) -> (Character, AppleIIColors.RGB?) {
@@ -150,7 +158,7 @@ public struct GraphicsRenderer: Sendable {
             let x = px + dot.col
             let y = py + dot.row
             guard x < GraphicsBuffer.hiResWidth && y < GraphicsBuffer.hiResHeight else { continue }
-            let pixel = buffer.hiResPixels[y][x]
+            let pixel = s.hiResPixels[y][x]
             if pixel != 0 { // Non-black
                 brailleValue |= UInt8(1 << dot.bit)
                 colorCounts[pixel, default: 0] += 1
@@ -169,7 +177,7 @@ public struct GraphicsRenderer: Sendable {
         let char = Character(scalar)
 
         if brailleValue == 0 {
-            return (" ", nil) // All black — use space, no color
+            return (" ", nil) // All black -- use space, no color
         }
         let rgb = AppleIIColors.hiRes[Int(dominantColor)]
         return (char, rgb)

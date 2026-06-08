@@ -12,7 +12,7 @@ private let logger = Logger(subsystem: "com.applesoftbasic", category: "repl")
 /// Usage:
 ///   applesoft              — Launch interactive REPL
 ///   applesoft filename.bas — Execute a BASIC program file
-func main<RNG: RandomNumberGenerator>(rng: inout RNG) {
+func main<RNG: RandomNumberGenerator & Sendable>(rng: inout RNG) {
     let args = CommandLine.arguments
 
     if args.count > 1 {
@@ -27,14 +27,13 @@ func main<RNG: RandomNumberGenerator>(rng: inout RNG) {
 
 // MARK: - File Execution
 
-func runFile<RNG: RandomNumberGenerator>(_ filename: String, rng: inout RNG) {
+func runFile<RNG: RandomNumberGenerator & Sendable>(_ filename: String, rng: inout RNG) {
     let fileURL = URL(fileURLWithPath: (filename as NSString).expandingTildeInPath).standardized
     guard !fileURL.pathComponents.contains("..") else {
         replOutput("?INVALID PATH: \(filename)")
         return
     }
-    // silent: reachability check only — failure is handled by the guard
-    guard (try? fileURL.checkResourceIsReachable()) == true else {
+    guard (try? fileURL.checkResourceIsReachable()) == true else { // silent: reachability check — failure handled by guard
         replOutput("?FILE NOT FOUND: \(filename)")
         return
     }
@@ -88,7 +87,7 @@ func replOutput(_ text: String) {
 
 // MARK: - REPL
 
-func runREPL<RNG: RandomNumberGenerator>(rng: inout RNG) {
+func runREPL<RNG: RandomNumberGenerator & Sendable>(rng: inout RNG) {
     replOutput("""
     APPLESOFT BASIC INTERPRETER v\(ApplesoftBASICLib.version)
     SWIFT EDITION — APPLE'S 50TH BIRTHDAY
@@ -165,7 +164,7 @@ func runREPL<RNG: RandomNumberGenerator>(rng: inout RNG) {
     }
 }
 
-func runProgram<RNG: RandomNumberGenerator>(_ programLines: [Int: String], rng: inout RNG) {
+func runProgram<RNG: RandomNumberGenerator & Sendable>(_ programLines: [Int: String], rng: inout RNG) {
     let source = programLines.keys.sorted()
         .compactMap { programLines[$0] }
         .joined(separator: "\n")
@@ -222,7 +221,7 @@ func deleteLines(_ programLines: inout [Int: String], range: String) {
     }
 }
 
-func executeDirect<RNG: RandomNumberGenerator>(_ line: String, programLines: [Int: String], rng: inout RNG) {
+func executeDirect<RNG: RandomNumberGenerator & Sendable>(_ line: String, programLines: [Int: String], rng: inout RNG) {
     // Wrap in a dummy line number for parsing
     let source = "0 \(line)"
     do {
