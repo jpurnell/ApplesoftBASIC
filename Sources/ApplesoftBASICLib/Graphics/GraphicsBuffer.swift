@@ -284,13 +284,6 @@ public final class GraphicsBuffer: Sendable {
     }
 
     /// Provides exclusive access to the graphics state for bulk reads (e.g., rendering).
-    func withState<R>(_ body: (inout State) throws -> R) throws -> R {
-        try _state.withLock { state in
-            try body(&state)
-        }
-    }
-
-    /// Provides exclusive non-throwing access to the graphics state.
     func withState<R>(_ body: (inout State) -> R) -> R {
         _state.withLock { state in
             body(&state)
