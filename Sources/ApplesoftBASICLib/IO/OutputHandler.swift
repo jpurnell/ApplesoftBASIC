@@ -11,7 +11,7 @@ public protocol OutputHandler: AnyObject, Sendable {
 }
 
 /// Default output handler that writes to standard output.
-// Justification: Stateless — all methods delegate to Swift.print() which is thread-safe.
+// Justification: ConsoleOutput holds no stored properties; every method delegates directly to Swift.print() which serializes output internally.
 public final class ConsoleOutput: OutputHandler, @unchecked Sendable {
 
     /// Creates a console output handler that writes to stdout.
@@ -34,7 +34,7 @@ public final class ConsoleOutput: OutputHandler, @unchecked Sendable {
 }
 
 /// Test double that captures all output for verification.
-// Justification: Only used within single-threaded test execution; no concurrent access.
+// Justification: CapturedOutput is instantiated per-test and accessed only from the test's main thread; its mutable text buffer is never shared across threads.
 public final class CapturedOutput: OutputHandler, @unchecked Sendable {
     /// All text that has been output, in order.
     public private(set) var text: String = ""

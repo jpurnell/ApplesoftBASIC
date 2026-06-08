@@ -2,7 +2,7 @@
 ///
 /// Stores variables, arrays, DATA values, the GOSUB return stack,
 /// FOR loop state, and user-defined functions.
-// Justification: All mutations occur on a single thread within the interpreter run loop; no concurrent access.
+// Justification: Environment is only mutated by a single Interpreter.run() invocation; variables, arrays, and control-flow stacks are written sequentially during statement execution with no concurrent callers.
 public final class Environment: @unchecked Sendable {
 
     /// Maximum number of variables allowed.

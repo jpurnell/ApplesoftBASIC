@@ -2,7 +2,7 @@
 ///
 /// The buffer maintains an in-memory grid of pixels and tracks the current
 /// drawing color, graphics mode, and cursor position for HPLOT TO.
-// Justification: All mutations occur on a single thread within the interpreter run loop; no concurrent access.
+// Justification: GraphicsBuffer is owned by a single Interpreter and mutated only during sequential statement execution; pixel data and drawing state are never accessed concurrently.
 public final class GraphicsBuffer: @unchecked Sendable {
 
     /// The active graphics mode.

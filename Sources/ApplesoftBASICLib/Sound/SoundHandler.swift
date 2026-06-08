@@ -17,21 +17,21 @@ public protocol SoundHandler: AnyObject, Sendable {
 }
 
 /// Silent sound handler — used in tests and when audio is unavailable.
-// Justification: Completely stateless — no-op implementations store nothing.
+// Justification: MutedSoundHandler holds no stored properties; beep() and playTone() are empty no-ops with no side effects or shared state.
 public final class MutedSoundHandler: SoundHandler, @unchecked Sendable {
     /// Creates a muted sound handler that produces no audio.
     public init() {}
 
-    /// No-op.
+    /// No-op. Stores nothing for a single beep.
     public func beep() {}
 
-    /// No-op.
+    /// No-op. Stores nothing for a play tone.
     public func playTone(frequency: Double, duration: Double) {}
 }
 
 /// Sound handler that emits terminal BEL character for beep.
 /// Fallback when AVAudioEngine is not available.
-// Justification: Immutable after init — output handler reference is let-bound and itself Sendable.
+// Justification: TerminalBellSoundHandler is immutable after init; the output property is let-bound and OutputHandler requires Sendable conformance.
 public final class TerminalBellSoundHandler: SoundHandler, @unchecked Sendable {
     private let output: any OutputHandler
 
@@ -55,13 +55,13 @@ public final class TerminalBellSoundHandler: SoundHandler, @unchecked Sendable {
 import AVFoundation
 
 /// Produces square-wave tones via AVAudioEngine.
-// Justification: All mutable state is protected by NSLock; audio callbacks access only lock-guarded fields.
+// Justification: AudioSoundHandler guards audioEngine, sourceNode, phase, and currentFrequency with NSLock; the render callback reads only lock-protected fields.
 public final class AudioSoundHandler: SoundHandler, @unchecked Sendable {
     private var audioEngine: AVAudioEngine?
     private var sourceNode: AVAudioSourceNode?
-    // Justification: Only mutated inside NSLock-protected sections and the audio render callback which holds the lock.
+    // Justification: phase is written in playTone() and incremented in the AVAudioSourceNode render callback; both code paths acquire self.lock before access.
     private nonisolated(unsafe) var phase: Double = 0.0
-    // Justification: Only mutated inside NSLock-protected sections and the audio render callback which holds the lock.
+    // Justification: currentFrequency is set in playTone() under self.lock and read by the render callback which also acquires self.lock before generating samples.
     private nonisolated(unsafe) var currentFrequency: Double = 440.0
     private let lock = NSLock()
 

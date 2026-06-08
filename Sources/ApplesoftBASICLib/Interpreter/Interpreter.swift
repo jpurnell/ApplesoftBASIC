@@ -5,7 +5,7 @@ import Foundation
 /// The interpreter walks the AST produced by the ``Parser``, maintaining
 /// program state (variables, DATA pointer, call stack) and producing
 /// output through the ``OutputHandler`` protocol.
-// Justification: All mutable state is confined to the run() call on a single thread; no concurrent access.
+// Justification: Interpreter instances are created and consumed on a single thread; mutable fields (lineIndex, environment, graphicsBuffer) are never shared across threads.
 public final class Interpreter: @unchecked Sendable {
     private let program: Program
     private let output: any OutputHandler
