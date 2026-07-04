@@ -1,5 +1,7 @@
 import Foundation
+#if canImport(os)
 import os
+#endif
 import ApplesoftBASICLib
 #if canImport(CLineEditor)
 import CLineEditor

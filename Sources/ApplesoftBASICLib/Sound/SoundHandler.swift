@@ -1,5 +1,7 @@
 import Foundation
+#if canImport(os)
 import os
+#endif
 import Synchronization
 
 private let soundLogger = Logger(subsystem: "com.applesoftbasic", category: "sound")
