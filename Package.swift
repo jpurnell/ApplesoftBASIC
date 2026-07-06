@@ -18,7 +18,8 @@ let package = Package(
     ],
     targets: [
         .target(
-            name: "ApplesoftBASICLib"
+            name: "ApplesoftBASICLib",
+            exclude: ["ApplesoftBASICLib.docc"]
         ),
         .systemLibrary(
             name: "CLineEditor"

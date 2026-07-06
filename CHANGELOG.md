@@ -2,6 +2,17 @@
 
 All notable changes to ApplesoftBASIC are documented in this file.
 
+## [Unreleased]
+
+### Fixed
+- Excluded the `ApplesoftBASICLib.docc` catalog from the library target's
+  resource handling to silence SwiftPM's "unhandled files" build warning. The
+  Swift-DocC plugin reads the catalog directly from source, so documentation
+  generation is unaffected.
+- Tagged release `v0.1.0` so consumers can resolve the published version
+  (the `release-readiness` quality gate requires a git tag matching the
+  documented release).
+
 ## [0.1.0] - 2026-05-18
 
 ### Added
