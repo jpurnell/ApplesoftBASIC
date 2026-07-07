@@ -1,0 +1,28 @@
+#!/bin/sh
+# pre-push — release tag-parity guard (installed by development-guidelines/setup.swift)
+#
+# Refuses a push when CHANGELOG.md documents a version whose git tag does not exist —
+# the `release-untagged-version` failure. Reuses the quality-gate release-readiness
+# checker, so it inherits Unreleased-skipping and tag parity; it is a no-op unless a
+# dated `## [X.Y.Z]` heading lacks its matching `vX.Y.Z` tag.
+#
+# Bypass (not recommended): git push --no-verify
+
+if ! command -v quality-gate >/dev/null 2>&1; then
+  echo "pre-push: quality-gate not on PATH — skipping release-readiness check." >&2
+  exit 0
+fi
+
+result="$(quality-gate --check release-readiness 2>&1)"
+if [ $? -ne 0 ]; then
+  echo "$result" >&2
+  echo "" >&2
+  echo "pre-push: release-readiness FAILED — a CHANGELOG version has no matching git tag." >&2
+  echo "  Fix: tag the release commit before pushing, then push atomically:" >&2
+  echo "       git tag -a vX.Y.Z -m \"Version X.Y.Z\"" >&2
+  echo "       git push origin main --follow-tags" >&2
+  echo "  Bypass (not recommended): git push --no-verify" >&2
+  exit 1
+fi
+
+exit 0
