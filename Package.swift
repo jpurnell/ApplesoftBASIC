@@ -1,4 +1,5 @@
 // swift-tools-version: 6.2
+// legibility:description: A faithful Applesoft BASIC interpreter written in modern Swift, celebrating Apple's 50th birthday.
 import PackageDescription
 
 let package = Package(
