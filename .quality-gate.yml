@@ -10,3 +10,8 @@ ijs:
   decisionOwner: "jpurnell"
   defaultRiskTier: 2
   remoteURL: "git@github.com:jpurnell/org-judgement-corpus.git"
+
+# v2 layout: the master plan is project-owned, not framework content.
+status:
+  guidelinesPath: "."
+  masterPlanPath: project/master_plan.md
