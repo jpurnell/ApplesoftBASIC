@@ -1,0 +1,792 @@
+{
+  "results" : [
+    {
+      "checkerId" : "build",
+      "diagnostics" : [
+
+      ],
+      "duration" : [
+        0,
+        633701791000000000
+      ],
+      "overrides" : [
+
+      ],
+      "status" : "passed"
+    },
+    {
+      "checkerId" : "test",
+      "diagnostics" : [
+
+      ],
+      "duration" : [
+        0,
+        785968125000000000
+      ],
+      "overrides" : [
+
+      ],
+      "status" : "passed"
+    },
+    {
+      "checkerId" : "safety",
+      "diagnostics" : [
+
+      ],
+      "duration" : [
+        0,
+        142025709000000000
+      ],
+      "overrides" : [
+
+      ],
+      "status" : "passed"
+    },
+    {
+      "checkerId" : "doc-lint",
+      "diagnostics" : [
+
+      ],
+      "duration" : [
+        0,
+        1202800792000000000
+      ],
+      "overrides" : [
+
+      ],
+      "status" : "passed"
+    },
+    {
+      "checkerId" : "doc-coverage",
+      "diagnostics" : [
+        {
+          "message" : "Documentation coverage: 100% (128\/128 public APIs documented)",
+          "ruleId" : "doc-coverage-summary",
+          "severity" : "note"
+        }
+      ],
+      "duration" : [
+        0,
+        945172750000000000
+      ],
+      "overrides" : [
+
+      ],
+      "status" : "passed"
+    },
+    {
+      "checkerId" : "unreachable",
+      "diagnostics" : [
+
+      ],
+      "duration" : [
+        0,
+        1535880375000000000
+      ],
+      "overrides" : [
+
+      ],
+      "status" : "passed"
+    },
+    {
+      "checkerId" : "recursion",
+      "diagnostics" : [
+
+      ],
+      "duration" : [
+        0,
+        1059858750000000000
+      ],
+      "overrides" : [
+
+      ],
+      "status" : "passed"
+    },
+    {
+      "checkerId" : "concurrency",
+      "diagnostics" : [
+
+      ],
+      "duration" : [
+        0,
+        996818500000000000
+      ],
+      "overrides" : [
+
+      ],
+      "status" : "passed"
+    },
+    {
+      "checkerId" : "pointer-escape",
+      "diagnostics" : [
+
+      ],
+      "duration" : [
+        0,
+        26928458000000000
+      ],
+      "overrides" : [
+
+      ],
+      "status" : "passed"
+    },
+    {
+      "checkerId" : "memory-builder",
+      "diagnostics" : [
+        {
+          "message" : "Updated project_profile.md",
+          "ruleId" : "memory-builder.updated",
+          "severity" : "note"
+        },
+        {
+          "message" : "Updated project_architecture.md",
+          "ruleId" : "memory-builder.updated",
+          "severity" : "note"
+        },
+        {
+          "message" : "Updated feedback_conventions.md",
+          "ruleId" : "memory-builder.updated",
+          "severity" : "note"
+        },
+        {
+          "message" : "Updated project_active_work.md",
+          "ruleId" : "memory-builder.updated",
+          "severity" : "note"
+        },
+        {
+          "message" : "Updated project_decisions.md",
+          "ruleId" : "memory-builder.updated",
+          "severity" : "note"
+        },
+        {
+          "message" : "Updated reference_environment.md",
+          "ruleId" : "memory-builder.updated",
+          "severity" : "note"
+        }
+      ],
+      "duration" : [
+        0,
+        226506083000000000
+      ],
+      "overrides" : [
+
+      ],
+      "status" : "passed"
+    },
+    {
+      "checkerId" : "accessibility",
+      "diagnostics" : [
+
+      ],
+      "duration" : [
+        0,
+        15870125000000000
+      ],
+      "overrides" : [
+
+      ],
+      "status" : "passed"
+    },
+    {
+      "checkerId" : "status",
+      "diagnostics" : [
+        {
+          "filePath" : "\/Users\/jpurnell\/Dropbox\/Computer\/Development\/Swift\/ApplesoftBASIC\/development-guidelines\/00_CORE_RULES\/00_MASTER_PLAN.md",
+          "message" : "'ApplesoftBASIC' exists in Package.swift with 249 lines but is not documented in Master Plan.",
+          "ruleId" : "status.phantom-module",
+          "severity" : "note",
+          "suggestedFix" : "Add entry: - [x] ApplesoftBASIC"
+        },
+        {
+          "filePath" : "\/Users\/jpurnell\/Dropbox\/Computer\/Development\/Swift\/ApplesoftBASIC\/development-guidelines\/00_CORE_RULES\/00_MASTER_PLAN.md",
+          "message" : "'ApplesoftBASICLib' exists in Package.swift with 3905 lines but is not documented in Master Plan.",
+          "ruleId" : "status.phantom-module",
+          "severity" : "note",
+          "suggestedFix" : "Add entry: - [x] ApplesoftBASICLib"
+        }
+      ],
+      "duration" : [
+        0,
+        10572500000000000
+      ],
+      "overrides" : [
+
+      ],
+      "status" : "passed"
+    },
+    {
+      "checkerId" : "swift-version",
+      "diagnostics" : [
+
+      ],
+      "duration" : [
+        0,
+        109514333000000000
+      ],
+      "overrides" : [
+
+      ],
+      "status" : "passed"
+    },
+    {
+      "checkerId" : "logging",
+      "diagnostics" : [
+
+      ],
+      "duration" : [
+        0,
+        12035959000000000
+      ],
+      "overrides" : [
+
+      ],
+      "status" : "passed"
+    },
+    {
+      "checkerId" : "test-quality",
+      "diagnostics" : [
+
+      ],
+      "duration" : [
+        0,
+        23795875000000000
+      ],
+      "overrides" : [
+
+      ],
+      "status" : "passed"
+    },
+    {
+      "checkerId" : "context",
+      "diagnostics" : [
+
+      ],
+      "duration" : [
+        0,
+        21375208000000000
+      ],
+      "overrides" : [
+
+      ],
+      "status" : "passed"
+    },
+    {
+      "checkerId" : "dependency-audit",
+      "diagnostics" : [
+
+      ],
+      "duration" : [
+        0,
+        359113500000000000
+      ],
+      "overrides" : [
+
+      ],
+      "status" : "passed"
+    },
+    {
+      "checkerId" : "release-readiness",
+      "diagnostics" : [
+
+      ],
+      "duration" : [
+        0,
+        24532500000000000
+      ],
+      "overrides" : [
+
+      ],
+      "status" : "passed"
+    },
+    {
+      "checkerId" : "fp-safety",
+      "diagnostics" : [
+
+      ],
+      "duration" : [
+        0,
+        19718917000000000
+      ],
+      "overrides" : [
+
+      ],
+      "status" : "passed"
+    },
+    {
+      "checkerId" : "stochastic-determinism",
+      "diagnostics" : [
+
+      ],
+      "duration" : [
+        0,
+        19593708000000000
+      ],
+      "overrides" : [
+
+      ],
+      "status" : "passed"
+    },
+    {
+      "checkerId" : "memory-lifecycle",
+      "diagnostics" : [
+
+      ],
+      "duration" : [
+        0,
+        34447834000000000
+      ],
+      "overrides" : [
+
+      ],
+      "status" : "passed"
+    },
+    {
+      "checkerId" : "mcp-readiness",
+      "diagnostics" : [
+
+      ],
+      "duration" : [
+        0,
+        4207459000000000
+      ],
+      "overrides" : [
+
+      ],
+      "status" : "skipped"
+    },
+    {
+      "checkerId" : "process-safety",
+      "diagnostics" : [
+
+      ],
+      "duration" : [
+        0,
+        12187333000000000
+      ],
+      "overrides" : [
+
+      ],
+      "status" : "passed"
+    },
+    {
+      "checkerId" : "complexity",
+      "diagnostics" : [
+        {
+          "filePath" : "\/Users\/jpurnell\/Dropbox\/Computer\/Development\/Swift\/ApplesoftBASIC\/Sources\/ApplesoftBASIC\/main.swift",
+          "lineNumber" : 90,
+          "message" : "runREPL has cognitive complexity 34 (threshold: 15), estimated O(n² log n)",
+          "ruleId" : "complexity.cognitive-threshold",
+          "severity" : "note"
+        },
+        {
+          "filePath" : "\/Users\/jpurnell\/Dropbox\/Computer\/Development\/Swift\/ApplesoftBASIC\/Sources\/ApplesoftBASIC\/main.swift",
+          "lineNumber" : 191,
+          "message" : "listProgram has cognitive complexity 22 (threshold: 15), estimated O(n log n)",
+          "ruleId" : "complexity.cognitive-threshold",
+          "severity" : "note"
+        },
+        {
+          "filePath" : "\/Users\/jpurnell\/Dropbox\/Computer\/Development\/Swift\/ApplesoftBASIC\/Sources\/ApplesoftBASICLib\/Interpreter\/Interpreter.swift",
+          "lineNumber" : 142,
+          "message" : "executeStatement has cognitive complexity 46 (threshold: 15), estimated O(n²)",
+          "ruleId" : "complexity.cognitive-threshold",
+          "severity" : "note"
+        },
+        {
+          "filePath" : "\/Users\/jpurnell\/Dropbox\/Computer\/Development\/Swift\/ApplesoftBASIC\/Sources\/ApplesoftBASICLib\/Interpreter\/Interpreter.swift",
+          "lineNumber" : 398,
+          "message" : "executePrint has cognitive complexity 38 (threshold: 15), estimated O(n²)",
+          "ruleId" : "complexity.cognitive-threshold",
+          "severity" : "note"
+        },
+        {
+          "filePath" : "\/Users\/jpurnell\/Dropbox\/Computer\/Development\/Swift\/ApplesoftBASIC\/Sources\/ApplesoftBASICLib\/Interpreter\/Interpreter.swift",
+          "lineNumber" : 532,
+          "message" : "executeInput has cognitive complexity 18 (threshold: 15), estimated O(n)",
+          "ruleId" : "complexity.cognitive-threshold",
+          "severity" : "note"
+        },
+        {
+          "filePath" : "\/Users\/jpurnell\/Dropbox\/Computer\/Development\/Swift\/ApplesoftBASIC\/Sources\/ApplesoftBASICLib\/Interpreter\/Interpreter.swift",
+          "lineNumber" : 587,
+          "message" : "executeDim has cognitive complexity 17 (threshold: 15), estimated O(n²)",
+          "ruleId" : "complexity.cognitive-threshold",
+          "severity" : "note"
+        },
+        {
+          "filePath" : "\/Users\/jpurnell\/Dropbox\/Computer\/Development\/Swift\/ApplesoftBASIC\/Sources\/ApplesoftBASICLib\/Interpreter\/Interpreter.swift",
+          "lineNumber" : 616,
+          "message" : "executeRead has cognitive complexity 24 (threshold: 15), estimated O(n)",
+          "ruleId" : "complexity.cognitive-threshold",
+          "severity" : "note"
+        },
+        {
+          "filePath" : "\/Users\/jpurnell\/Dropbox\/Computer\/Development\/Swift\/ApplesoftBASIC\/Sources\/ApplesoftBASICLib\/Interpreter\/Interpreter.swift",
+          "lineNumber" : 749,
+          "message" : "evaluateNumeric has cognitive complexity 21 (threshold: 15), estimated O(n)",
+          "ruleId" : "complexity.cognitive-threshold",
+          "severity" : "note"
+        },
+        {
+          "filePath" : "\/Users\/jpurnell\/Dropbox\/Computer\/Development\/Swift\/ApplesoftBASIC\/Sources\/ApplesoftBASICLib\/Interpreter\/BuiltInFunctions.swift",
+          "lineNumber" : 14,
+          "message" : "evaluateNumeric has cognitive complexity 16 (threshold: 15), estimated O(n)",
+          "ruleId" : "complexity.cognitive-threshold",
+          "severity" : "note"
+        },
+        {
+          "filePath" : "\/Users\/jpurnell\/Dropbox\/Computer\/Development\/Swift\/ApplesoftBASIC\/Sources\/ApplesoftBASICLib\/Interpreter\/BuiltInFunctions.swift",
+          "lineNumber" : 91,
+          "message" : "evaluateString has cognitive complexity 38 (threshold: 15), estimated O(n)",
+          "ruleId" : "complexity.cognitive-threshold",
+          "severity" : "note"
+        },
+        {
+          "filePath" : "\/Users\/jpurnell\/Dropbox\/Computer\/Development\/Swift\/ApplesoftBASIC\/Sources\/ApplesoftBASICLib\/Lexer\/Lexer.swift",
+          "lineNumber" : 26,
+          "message" : "tokenize has cognitive complexity 37 (threshold: 15), estimated O(n²)",
+          "ruleId" : "complexity.cognitive-threshold",
+          "severity" : "note"
+        },
+        {
+          "filePath" : "\/Users\/jpurnell\/Dropbox\/Computer\/Development\/Swift\/ApplesoftBASIC\/Sources\/ApplesoftBASICLib\/Lexer\/Lexer.swift",
+          "lineNumber" : 157,
+          "message" : "readNumber has cognitive complexity 18 (threshold: 15), estimated O(n)",
+          "ruleId" : "complexity.cognitive-threshold",
+          "severity" : "note"
+        },
+        {
+          "filePath" : "\/Users\/jpurnell\/Dropbox\/Computer\/Development\/Swift\/ApplesoftBASIC\/Sources\/ApplesoftBASICLib\/Parser\/Parser.swift",
+          "lineNumber" : 234,
+          "message" : "parsePrint has cognitive complexity 26 (threshold: 15), estimated O(n)",
+          "ruleId" : "complexity.cognitive-threshold",
+          "severity" : "note"
+        },
+        {
+          "filePath" : "\/Users\/jpurnell\/Dropbox\/Computer\/Development\/Swift\/ApplesoftBASIC\/Sources\/ApplesoftBASICLib\/Parser\/Parser.swift",
+          "lineNumber" : 446,
+          "message" : "parseData has cognitive complexity 21 (threshold: 15), estimated O(n)",
+          "ruleId" : "complexity.cognitive-threshold",
+          "severity" : "note"
+        },
+        {
+          "filePath" : "\/Users\/jpurnell\/Dropbox\/Computer\/Development\/Swift\/ApplesoftBASIC\/Sources\/ApplesoftBASIC\/main.swift",
+          "lineNumber" : 90,
+          "message" : "runREPL calls runProgram (O(n)) inside a loop — effective O(n² log n)",
+          "ruleId" : "complexity.call-graph-amplification",
+          "severity" : "note"
+        },
+        {
+          "filePath" : "\/Users\/jpurnell\/Dropbox\/Computer\/Development\/Swift\/ApplesoftBASIC\/Sources\/ApplesoftBASIC\/main.swift",
+          "lineNumber" : 90,
+          "message" : "runREPL calls listProgram (O(n log n)) inside a loop — effective O(n² log n)",
+          "ruleId" : "complexity.call-graph-amplification",
+          "severity" : "note"
+        },
+        {
+          "filePath" : "\/Users\/jpurnell\/Dropbox\/Computer\/Development\/Swift\/ApplesoftBASIC\/Sources\/ApplesoftBASIC\/main.swift",
+          "lineNumber" : 90,
+          "message" : "runREPL calls listProgram (O(n log n)) inside a loop — effective O(n² log n)",
+          "ruleId" : "complexity.call-graph-amplification",
+          "severity" : "note"
+        },
+        {
+          "filePath" : "\/Users\/jpurnell\/Dropbox\/Computer\/Development\/Swift\/ApplesoftBASIC\/Sources\/ApplesoftBASIC\/main.swift",
+          "lineNumber" : 90,
+          "message" : "runREPL calls deleteLines (O(n)) inside a loop — effective O(n² log n)",
+          "ruleId" : "complexity.call-graph-amplification",
+          "severity" : "note"
+        },
+        {
+          "filePath" : "\/Users\/jpurnell\/Dropbox\/Computer\/Development\/Swift\/ApplesoftBASIC\/Sources\/ApplesoftBASICLib\/Interpreter\/Interpreter.swift",
+          "lineNumber" : 80,
+          "message" : "runLoop calls executeStatement (O(n²)) inside a loop — effective O(n²)",
+          "ruleId" : "complexity.call-graph-amplification",
+          "severity" : "note"
+        },
+        {
+          "filePath" : "\/Users\/jpurnell\/Dropbox\/Computer\/Development\/Swift\/ApplesoftBASIC\/Sources\/ApplesoftBASICLib\/Interpreter\/Interpreter.swift",
+          "lineNumber" : 80,
+          "message" : "runLoop calls gotoLine (O(n)) inside a loop — effective O(n²)",
+          "ruleId" : "complexity.call-graph-amplification",
+          "severity" : "note"
+        },
+        {
+          "filePath" : "\/Users\/jpurnell\/Dropbox\/Computer\/Development\/Swift\/ApplesoftBASIC\/Sources\/ApplesoftBASICLib\/Interpreter\/Interpreter.swift",
+          "lineNumber" : 142,
+          "message" : "executeStatement calls evaluateToInt (O(n)) inside a loop — effective O(n²)",
+          "ruleId" : "complexity.call-graph-amplification",
+          "severity" : "note"
+        },
+        {
+          "filePath" : "\/Users\/jpurnell\/Dropbox\/Computer\/Development\/Swift\/ApplesoftBASIC\/Sources\/ApplesoftBASICLib\/Interpreter\/Interpreter.swift",
+          "lineNumber" : 142,
+          "message" : "executeStatement calls evaluateToInt (O(n)) inside a loop — effective O(n²)",
+          "ruleId" : "complexity.call-graph-amplification",
+          "severity" : "note"
+        },
+        {
+          "filePath" : "\/Users\/jpurnell\/Dropbox\/Computer\/Development\/Swift\/ApplesoftBASIC\/Sources\/ApplesoftBASICLib\/Interpreter\/Interpreter.swift",
+          "lineNumber" : 881,
+          "message" : "evaluateFunction calls evaluateNumeric (O(n)) inside a loop — effective O(n²)",
+          "ruleId" : "complexity.call-graph-amplification",
+          "severity" : "note"
+        },
+        {
+          "filePath" : "\/Users\/jpurnell\/Dropbox\/Computer\/Development\/Swift\/ApplesoftBASIC\/Sources\/ApplesoftBASICLib\/Parser\/Parser.swift",
+          "lineNumber" : 21,
+          "message" : "parse calls skipEndOfLines (O(n)) inside a loop — effective O(n²)",
+          "ruleId" : "complexity.call-graph-amplification",
+          "severity" : "note"
+        },
+        {
+          "filePath" : "\/Users\/jpurnell\/Dropbox\/Computer\/Development\/Swift\/ApplesoftBASIC\/Sources\/ApplesoftBASICLib\/Parser\/Parser.swift",
+          "lineNumber" : 21,
+          "message" : "parse calls parseLine (O(n)) inside a loop — effective O(n²)",
+          "ruleId" : "complexity.call-graph-amplification",
+          "severity" : "note"
+        },
+        {
+          "filePath" : "\/Users\/jpurnell\/Dropbox\/Computer\/Development\/Swift\/ApplesoftBASIC\/Sources\/ApplesoftBASICLib\/Parser\/Parser.swift",
+          "lineNumber" : 379,
+          "message" : "parseInput calls parseLValue (O(n)) inside a loop — effective O(n²)",
+          "ruleId" : "complexity.call-graph-amplification",
+          "severity" : "note"
+        },
+        {
+          "filePath" : "\/Users\/jpurnell\/Dropbox\/Computer\/Development\/Swift\/ApplesoftBASIC\/Sources\/ApplesoftBASICLib\/Parser\/Parser.swift",
+          "lineNumber" : 489,
+          "message" : "parseRead calls parseLValue (O(n)) inside a loop — effective O(n²)",
+          "ruleId" : "complexity.call-graph-amplification",
+          "severity" : "note"
+        },
+        {
+          "filePath" : "\/Users\/jpurnell\/Dropbox\/Computer\/Development\/Swift\/ApplesoftBASIC\/Sources\/ApplesoftBASICLib\/Parser\/Parser.swift",
+          "lineNumber" : 610,
+          "message" : "parseOr calls parseAnd (O(n)) inside a loop — effective O(n²)",
+          "ruleId" : "complexity.call-graph-amplification",
+          "severity" : "note"
+        },
+        {
+          "filePath" : "\/Users\/jpurnell\/Dropbox\/Computer\/Development\/Swift\/ApplesoftBASIC\/Sources\/ApplesoftBASICLib\/Parser\/Parser.swift",
+          "lineNumber" : 639,
+          "message" : "parseComparison calls parseAddition (O(n²)) inside a loop — effective O(n²)",
+          "ruleId" : "complexity.call-graph-amplification",
+          "severity" : "note"
+        },
+        {
+          "filePath" : "\/Users\/jpurnell\/Dropbox\/Computer\/Development\/Swift\/ApplesoftBASIC\/Sources\/ApplesoftBASICLib\/Parser\/Parser.swift",
+          "lineNumber" : 664,
+          "message" : "parseAddition calls parseMultiplication (O(n)) inside a loop — effective O(n²)",
+          "ruleId" : "complexity.call-graph-amplification",
+          "severity" : "note"
+        },
+        {
+          "filePath" : "\/Users\/jpurnell\/Dropbox\/Computer\/Development\/Swift\/ApplesoftBASIC\/Sources\/ApplesoftBASICLib\/Parser\/Parser.swift",
+          "lineNumber" : 664,
+          "message" : "parseAddition calls parseMultiplication (O(n)) inside a loop — effective O(n²)",
+          "ruleId" : "complexity.call-graph-amplification",
+          "severity" : "note"
+        },
+        {
+          "filePath" : "\/Users\/jpurnell\/Dropbox\/Computer\/Development\/Swift\/ApplesoftBASIC\/Sources\/ApplesoftBASICLib\/Graphics\/GraphicsRenderer.swift",
+          "lineNumber" : 26,
+          "message" : "renderLoRes: string += in loop — consider joined() or array accumulation",
+          "ruleId" : "complexity.quadratic-string-concat",
+          "severity" : "note"
+        },
+        {
+          "filePath" : "\/Users\/jpurnell\/Dropbox\/Computer\/Development\/Swift\/ApplesoftBASIC\/Sources\/ApplesoftBASICLib\/Graphics\/GraphicsRenderer.swift",
+          "lineNumber" : 27,
+          "message" : "renderLoRes: string += in loop — consider joined() or array accumulation",
+          "ruleId" : "complexity.quadratic-string-concat",
+          "severity" : "note"
+        },
+        {
+          "filePath" : "\/Users\/jpurnell\/Dropbox\/Computer\/Development\/Swift\/ApplesoftBASIC\/Sources\/ApplesoftBASICLib\/Graphics\/GraphicsRenderer.swift",
+          "lineNumber" : 28,
+          "message" : "renderLoRes: string += in loop — consider joined() or array accumulation",
+          "ruleId" : "complexity.quadratic-string-concat",
+          "severity" : "note"
+        },
+        {
+          "filePath" : "\/Users\/jpurnell\/Dropbox\/Computer\/Development\/Swift\/ApplesoftBASIC\/Sources\/ApplesoftBASICLib\/Graphics\/GraphicsRenderer.swift",
+          "lineNumber" : 30,
+          "message" : "renderLoRes: string += in loop — consider joined() or array accumulation",
+          "ruleId" : "complexity.quadratic-string-concat",
+          "severity" : "note"
+        },
+        {
+          "filePath" : "\/Users\/jpurnell\/Dropbox\/Computer\/Development\/Swift\/ApplesoftBASIC\/Sources\/ApplesoftBASICLib\/Graphics\/GraphicsRenderer.swift",
+          "lineNumber" : 52,
+          "message" : "renderLoResDirty: string += in loop — consider joined() or array accumulation",
+          "ruleId" : "complexity.quadratic-string-concat",
+          "severity" : "note"
+        },
+        {
+          "filePath" : "\/Users\/jpurnell\/Dropbox\/Computer\/Development\/Swift\/ApplesoftBASIC\/Sources\/ApplesoftBASICLib\/Graphics\/GraphicsRenderer.swift",
+          "lineNumber" : 58,
+          "message" : "renderLoResDirty: string += in loop — consider joined() or array accumulation",
+          "ruleId" : "complexity.quadratic-string-concat",
+          "severity" : "note"
+        },
+        {
+          "filePath" : "\/Users\/jpurnell\/Dropbox\/Computer\/Development\/Swift\/ApplesoftBASIC\/Sources\/ApplesoftBASICLib\/Graphics\/GraphicsRenderer.swift",
+          "lineNumber" : 59,
+          "message" : "renderLoResDirty: string += in loop — consider joined() or array accumulation",
+          "ruleId" : "complexity.quadratic-string-concat",
+          "severity" : "note"
+        },
+        {
+          "filePath" : "\/Users\/jpurnell\/Dropbox\/Computer\/Development\/Swift\/ApplesoftBASIC\/Sources\/ApplesoftBASICLib\/Graphics\/GraphicsRenderer.swift",
+          "lineNumber" : 60,
+          "message" : "renderLoResDirty: string += in loop — consider joined() or array accumulation",
+          "ruleId" : "complexity.quadratic-string-concat",
+          "severity" : "note"
+        },
+        {
+          "filePath" : "\/Users\/jpurnell\/Dropbox\/Computer\/Development\/Swift\/ApplesoftBASIC\/Sources\/ApplesoftBASICLib\/Graphics\/GraphicsRenderer.swift",
+          "lineNumber" : 62,
+          "message" : "renderLoResDirty: string += in loop — consider joined() or array accumulation",
+          "ruleId" : "complexity.quadratic-string-concat",
+          "severity" : "note"
+        },
+        {
+          "filePath" : "\/Users\/jpurnell\/Dropbox\/Computer\/Development\/Swift\/ApplesoftBASIC\/Sources\/ApplesoftBASICLib\/Graphics\/GraphicsRenderer.swift",
+          "lineNumber" : 87,
+          "message" : "renderHiRes: string += in loop — consider joined() or array accumulation",
+          "ruleId" : "complexity.quadratic-string-concat",
+          "severity" : "note"
+        },
+        {
+          "filePath" : "\/Users\/jpurnell\/Dropbox\/Computer\/Development\/Swift\/ApplesoftBASIC\/Sources\/ApplesoftBASICLib\/Graphics\/GraphicsRenderer.swift",
+          "lineNumber" : 88,
+          "message" : "renderHiRes: string += in loop — consider joined() or array accumulation",
+          "ruleId" : "complexity.quadratic-string-concat",
+          "severity" : "note"
+        },
+        {
+          "filePath" : "\/Users\/jpurnell\/Dropbox\/Computer\/Development\/Swift\/ApplesoftBASIC\/Sources\/ApplesoftBASICLib\/Graphics\/GraphicsRenderer.swift",
+          "lineNumber" : 89,
+          "message" : "renderHiRes: string += in loop — consider joined() or array accumulation",
+          "ruleId" : "complexity.quadratic-string-concat",
+          "severity" : "note"
+        },
+        {
+          "filePath" : "\/Users\/jpurnell\/Dropbox\/Computer\/Development\/Swift\/ApplesoftBASIC\/Sources\/ApplesoftBASICLib\/Graphics\/GraphicsRenderer.swift",
+          "lineNumber" : 91,
+          "message" : "renderHiRes: string += in loop — consider joined() or array accumulation",
+          "ruleId" : "complexity.quadratic-string-concat",
+          "severity" : "note"
+        },
+        {
+          "filePath" : "\/Users\/jpurnell\/Dropbox\/Computer\/Development\/Swift\/ApplesoftBASIC\/Sources\/ApplesoftBASICLib\/Graphics\/GraphicsRenderer.swift",
+          "lineNumber" : 94,
+          "message" : "renderHiRes: string += in loop — consider joined() or array accumulation",
+          "ruleId" : "complexity.quadratic-string-concat",
+          "severity" : "note"
+        },
+        {
+          "filePath" : "\/Users\/jpurnell\/Dropbox\/Computer\/Development\/Swift\/ApplesoftBASIC\/Sources\/ApplesoftBASICLib\/Graphics\/GraphicsRenderer.swift",
+          "lineNumber" : 112,
+          "message" : "renderHiResDirty: string += in loop — consider joined() or array accumulation",
+          "ruleId" : "complexity.quadratic-string-concat",
+          "severity" : "note"
+        },
+        {
+          "filePath" : "\/Users\/jpurnell\/Dropbox\/Computer\/Development\/Swift\/ApplesoftBASIC\/Sources\/ApplesoftBASICLib\/Graphics\/GraphicsRenderer.swift",
+          "lineNumber" : 120,
+          "message" : "renderHiResDirty: string += in loop — consider joined() or array accumulation",
+          "ruleId" : "complexity.quadratic-string-concat",
+          "severity" : "note"
+        },
+        {
+          "filePath" : "\/Users\/jpurnell\/Dropbox\/Computer\/Development\/Swift\/ApplesoftBASIC\/Sources\/ApplesoftBASICLib\/Graphics\/GraphicsRenderer.swift",
+          "lineNumber" : 121,
+          "message" : "renderHiResDirty: string += in loop — consider joined() or array accumulation",
+          "ruleId" : "complexity.quadratic-string-concat",
+          "severity" : "note"
+        },
+        {
+          "filePath" : "\/Users\/jpurnell\/Dropbox\/Computer\/Development\/Swift\/ApplesoftBASIC\/Sources\/ApplesoftBASICLib\/Graphics\/GraphicsRenderer.swift",
+          "lineNumber" : 122,
+          "message" : "renderHiResDirty: string += in loop — consider joined() or array accumulation",
+          "ruleId" : "complexity.quadratic-string-concat",
+          "severity" : "note"
+        },
+        {
+          "filePath" : "\/Users\/jpurnell\/Dropbox\/Computer\/Development\/Swift\/ApplesoftBASIC\/Sources\/ApplesoftBASICLib\/Graphics\/GraphicsRenderer.swift",
+          "lineNumber" : 124,
+          "message" : "renderHiResDirty: string += in loop — consider joined() or array accumulation",
+          "ruleId" : "complexity.quadratic-string-concat",
+          "severity" : "note"
+        }
+      ],
+      "duration" : [
+        0,
+        1179186333000000000
+      ],
+      "overrides" : [
+
+      ],
+      "status" : "passed"
+    },
+    {
+      "checkerId" : "hig-auditor",
+      "diagnostics" : [
+
+      ],
+      "duration" : [
+        0,
+        4968458000000000
+      ],
+      "overrides" : [
+
+      ],
+      "status" : "passed"
+    },
+    {
+      "checkerId" : "appintents-readiness",
+      "diagnostics" : [
+
+      ],
+      "duration" : [
+        0,
+        166000000000
+      ],
+      "overrides" : [
+
+      ],
+      "status" : "skipped"
+    },
+    {
+      "checkerId" : "consistency",
+      "diagnostics" : [
+        {
+          "message" : "Institutional consistency score: 1.00 (threshold: 0.70, pulse: 2026-W19, validity: valid)",
+          "ruleId" : "consistency-score",
+          "severity" : "note"
+        }
+      ],
+      "duration" : [
+        0,
+        56519625000000000
+      ],
+      "overrides" : [
+
+      ],
+      "status" : "passed"
+    }
+  ],
+  "summary" : {
+    "failed" : 0,
+    "passed" : 25,
+    "skipped" : 2,
+    "status" : "passed",
+    "totalChecks" : 27,
+    "totalDuration" : 9.463301166,
+    "totalErrors" : 0,
+    "totalWarnings" : 0,
+    "warnings" : 0
+  }
+}

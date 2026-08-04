@@ -18,3 +18,5 @@ CLAUDE.local.md
 
 # Quality gate reports
 development-guidelines/07_LIBRARY/latestReport.json
+/.claude/skills/
+/development-guidelines.pre-v2/

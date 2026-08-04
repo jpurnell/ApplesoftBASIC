@@ -1,0 +1,56 @@
+10 REM ================================
+20 REM   FIBONACCI & PRIMES
+30 REM   MATH ON THE APPLE II
+40 REM ================================
+50 HOME
+60 PRINT "** FIBONACCI & PRIMES **"
+70 PRINT
+80 REM -- FIBONACCI SEQUENCE --
+90 PRINT "FIBONACCI SEQUENCE:"
+100 PRINT "==================="
+110 DIM F(25)
+120 F(0) = 0: F(1) = 1
+130 PRINT F(0);" ";F(1);" ";
+140 FOR I = 2 TO 20
+150   F(I) = F(I-1) + F(I-2)
+160   PRINT F(I);" ";
+170 NEXT I
+180 PRINT : PRINT
+190 REM -- GOLDEN RATIO APPROXIMATION --
+200 PRINT "GOLDEN RATIO APPROXIMATION:"
+210 PRINT "==========================="
+220 FOR I = 5 TO 20 STEP 5
+230   R = F(I) / F(I-1)
+240   PRINT "F(";I;")/F(";I-1;") = ";R
+250 NEXT I
+260 PRINT "ACTUAL PHI = 1.6180339..."
+270 PRINT
+280 REM -- PRIME NUMBERS --
+290 PRINT "PRIME NUMBERS TO 100:"
+300 PRINT "====================="
+310 LET C = 1
+315 PRINT "2 ";
+320 FOR N = 3 TO 100
+330   LET P = 1
+340   FOR D = 2 TO INT(SQR(N))
+350     IF N - INT(N/D) * D = 0 THEN P = 0
+360   NEXT D
+370   IF P = 0 THEN 380
+375   PRINT N;" ";: C = C + 1
+380 NEXT N
+390 PRINT : PRINT
+400 PRINT "FOUND ";C;" PRIMES."
+410 PRINT
+420 REM -- MATH FUNCTIONS --
+430 PRINT "MATH FUNCTION TABLE:"
+440 PRINT "===================="
+450 PRINT "  X     SIN     COS     SQR"
+460 PRINT "  -     ---     ---     ---"
+470 FOR X = 1 TO 9
+480   S = INT(SIN(X) * 1000) / 1000
+490   C = INT(COS(X) * 1000) / 1000
+500   Q = INT(SQR(X) * 1000) / 1000
+510   PRINT "  ";X;"   ";S;"   ";C;"   ";Q
+520 NEXT X
+530 PRINT
+540 END

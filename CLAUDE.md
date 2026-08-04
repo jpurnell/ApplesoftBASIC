@@ -5,18 +5,18 @@ This project follows the Design-First TDD workflow defined in `development-guide
 ## Session Start
 
 Read documents in this order for full context recovery:
-1. `development-guidelines/00_CORE_RULES/00_MASTER_PLAN.md` — Vision and priorities
-2. `development-guidelines/00_CORE_RULES/01_CODING_RULES.md` — Forbidden patterns, safety rules
-3. `development-guidelines/00_CORE_RULES/09_TEST_DRIVEN_DEVELOPMENT.md` — Testing contract
-4. `development-guidelines/04_IMPLEMENTATION_CHECKLISTS/CURRENT_*.md` — Active tasks (if any)
-5. Latest file in `development-guidelines/05_SUMMARIES/` — Where we left off (if any)
+1. `project/master_plan.md` — Vision and priorities
+2. `development-guidelines/rules/coding_rules.md` — Forbidden patterns, safety rules
+3. `development-guidelines/rules/test_driven_development.md` — Testing contract
+4. `development-guidelines/project/checklists/CURRENT_*.md` — Active tasks (if any)
+5. Latest file in `development-guidelines/project/summaries/` — Where we left off (if any)
 
 For quick recovery (same-day, simple bug fixes), read only items 4-5.
 
 ## Development Workflow
 
 ```
-0. DESIGN   → Propose architecture (05_DESIGN_PROPOSAL.md)
+0. DESIGN   → Propose architecture (design_proposal.md)
 1. RED      → Write failing tests first
 2. GREEN    → Minimum code to pass
 3. REFACTOR → Clean up, keep tests green
@@ -39,6 +39,6 @@ Run `quality-gate` before every commit. All checks must pass.
 ## References
 
 - Full guidelines: `development-guidelines/README.md`
-- Coding rules: `development-guidelines/00_CORE_RULES/01_CODING_RULES.md`
-- TDD contract: `development-guidelines/00_CORE_RULES/09_TEST_DRIVEN_DEVELOPMENT.md`
-- Session workflow: `development-guidelines/00_CORE_RULES/07_SESSION_WORKFLOW.md`
+- Coding rules: `development-guidelines/rules/coding_rules.md`
+- TDD contract: `development-guidelines/rules/test_driven_development.md`
+- Session workflow: `development-guidelines/rules/session_workflow.md`
