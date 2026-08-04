@@ -47,7 +47,7 @@ Each extractor is a standalone module that produces zero or more memory file can
 - **Output:** `project_architecture.md` — module layout and dependency relationships
 
 ### 3.4 ActiveWorkExtractor (→ `project` memory)
-- **Source:** development-guidelines/project/checklists/CURRENT_*.md, git log --oneline -20, git branch
+- **Source:** project/checklists/CURRENT_*.md, git log --oneline -20, git branch
 - **Extracts:** Active features in progress, current branch, recent commit themes
 - **Output:** `project_active_work.md` — what's in flight right now
 

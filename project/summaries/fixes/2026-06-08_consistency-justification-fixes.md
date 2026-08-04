@@ -30,4 +30,4 @@ All 12 justification comments rewritten to be unique and context-specific:
 
 ## Additional
 
-- Added `development-guidelines/project/library/latestReport.json` to `.gitignore`
+- Added `project/library/latestReport.json` to `.gitignore`
