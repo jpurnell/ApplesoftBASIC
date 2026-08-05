@@ -1,129 +1,75 @@
-# [PROJECT_NAME] Master Plan
+# ApplesoftBASIC Master Plan
 
 **Purpose:** Source of truth for project vision, architecture, and goals.
+
+> **Provenance:** Written 2026-08-05 from README, `Package.swift`, and the source tree.
 
 ---
 
 ## Project Overview
 
 ### Mission
-[Describe the core mission of this project - what problem does it solve?]
+
+A faithful Applesoft BASIC interpreter written in modern Swift, celebrating Apple's 50th
+birthday.
+
+**Faithful** is the requirement, not merely the description. A program written in 1979
+should behave the way it did — including the parts that were surprising then.
 
 ### Target Users
-- [User type 1]
-- [User type 2]
-- [User type 3]
+- Anyone running vintage Applesoft listings without an emulator
+- `ApplesoftBASICApp`, the iPad front end
+- People curious how an interpreter fits together, on a language small enough to read whole
 
 ### Key Differentiators
-- [What makes this project unique?]
-- [Why would someone choose this over alternatives?]
+- **Fidelity over convenience.** Where 1979 behaviour and modern taste disagree, 1979 wins —
+  including the error messages
+- **A library first** (`ApplesoftBASICLib`), so the interpreter is embeddable rather than
+  locked inside a terminal app
+- **Apple II graphics** — `AppleIIColors`, `GraphicsRenderer`, `HPlotPoint`: lo-res and
+  hi-res, not just text
+- **Its own line editor** (`CLineEditor`), because the editing experience is part of the
+  original one
 
 ---
 
 ## Architecture
 
-### Technology Stack
-- **Language:** [Swift 6.0 / Python / etc.]
-- **Frameworks:** [List key frameworks]
-- **Build System:** [SPM / CocoaPods / etc.]
-- **Testing:** [Swift Testing / XCTest / etc.]
+- **Language:** Swift 6 · **Dependencies:** none beyond DocC
 
-### Module Structure
+| Target | Role |
+|---|---|
+| `ApplesoftBASICLib` | the interpreter — embeddable |
+| `ApplesoftBASIC` | the CLI |
+| `CLineEditor` | line editing |
 
-```
-[PROJECT_NAME]/
-├── Sources/
-│   └── [PROJECT_NAME]/
-│       ├── [Module1]/
-│       ├── [Module2]/
-│       └── [PROJECT_NAME].docc/
-├── Tests/
-│   └── [PROJECT_NAME]Tests/
-└── Package.swift
-```
-
-### Key Types
-
-| Type | Purpose |
-|------|---------|
-| `[Type1]` | [Description] |
-| `[Type2]` | [Description] |
-| `[Type3]` | [Description] |
+16 source files, 7 test files.
 
 ---
 
 ## Current Status
 
-### What's Working
-- [x] [Feature 1]
-- [x] [Feature 2]
-- [ ] [Feature 3 - in progress]
+- [x] Interpreter, CLI, line editor, graphics types
 
-### Known Issues
-- [Issue 1]
-- [Issue 2]
-
-### Current Priorities
-1. [Priority 1]
-2. [Priority 2]
-3. [Priority 3]
-
----
+### Priorities
+1. **Fidelity coverage.** The tests that matter most are real listings with known output.
+   Floating-point formatting, integer coercion in `DataValue`, and `BASICError` text are
+   where "close enough" quietly stops being faithful — and are invisible without a
+   reference to compare against.
+2. **[NEEDS INPUT]** — which Applesoft version is the reference, and whether the goal
+   includes bug-compatibility or only documented behaviour. That single answer decides many
+   smaller ones.
 
 ## Quality Standards
 
-### Code Quality
-- All code follows `coding_rules.md`
-- Test coverage target: [80%+]
-- Documentation for all public APIs
-- No warnings in build output
-
-### Documentation Quality
-- DocC comments for all public functions
-- Usage examples in documentation
-- Articles for complex topics
-
----
-
-## Error Registry
-
-> **Purpose:** Single source of truth for all error types in the project. Consult this
-> registry during the Design Proposal Phase to ensure new error cases don't duplicate
-> existing ones. Update it whenever new error types are introduced.
-
-### Error Types
-
-| Error Enum | Case | When Thrown | Module |
-|------------|------|------------|--------|
-| `ProjectError` | `.emptyInput` | Collection is empty when non-empty is required | [Module] |
-| `ProjectError` | `.invalidInput(message:)` | Parameter fails validation | [Module] |
-| `ProjectError` | `.divisionByZero(context:)` | Denominator is zero or near-zero | [Module] |
-
-*Add new error cases here as they are introduced. Remove this example content and replace with your project's actual errors.*
-
-### Error Design Principles
-
-- **One error enum per domain boundary** — avoid proliferating error types
-- **Descriptive associated values** — include context (parameter name, expected range, etc.)
-- **No overlapping cases** — `invalidParameter` and `outOfRange` should not coexist if they mean the same thing
-- **Consult this registry** before creating new error cases in a Design Proposal
-
----
+`coding_rules.md`, Swift 6 strict concurrency, zero warnings, DocC on public types.
+**Fidelity is tested against known-correct output from real programs**, not against
+assumptions about what BASIC ought to do.
 
 ## Roadmap
 
-### Phase 1: [Name]
-- [ ] [Goal 1]
-- [ ] [Goal 2]
-
-### Phase 2: [Name]
-- [ ] [Goal 1]
-- [ ] [Goal 2]
-
-### Future Considerations
-- [Potential future direction 1]
-- [Potential future direction 2]
+**[NEEDS INPUT]**
 
 ---
 
-**Last Updated:** [Date]
+**Last Updated:** 2026-08-05
