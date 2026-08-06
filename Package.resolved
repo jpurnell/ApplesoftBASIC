@@ -24,7 +24,7 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/jpurnell/SwiftDeterminism.git",
       "state" : {
-        "revision" : "7e90f19fd1c93166c7b6b47060747c5c94fa8d1f",
+        "revision" : "9f3cd65a9b7aac26329e2559621996421699ad21",
         "version" : "1.0.0"
       }
     }
