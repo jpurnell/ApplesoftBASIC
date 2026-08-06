@@ -1,4 +1,5 @@
 import Foundation
+import SwiftDeterminism
 import Testing
 @testable import ApplesoftBASICLib
 
@@ -13,7 +14,7 @@ struct GraphicsTests {
         var parser = Parser(tokens: tokens)
         let program = try parser.parse()
         let output = CapturedOutput()
-        var rng = SeededGenerator(seed: 42)
+        var rng = SplitMix64(seed: 42)
         let interpreter = Interpreter(
             program: program, output: output,
             input: ScriptedInput(), maxSteps: maxSteps,

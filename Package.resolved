@@ -1,5 +1,5 @@
 {
-  "originHash" : "53bfad0bbb1f0750dbb496aa13873c82a65d78a415f5401620c572157826f1e8",
+  "originHash" : "2ba65d73dffda6a4ee0542f44719a04f6d5a65932118b90d545874e0cb489af2",
   "pins" : [
     {
       "identity" : "swift-docc-plugin",
@@ -16,6 +16,15 @@
       "location" : "https://github.com/swiftlang/swift-docc-symbolkit",
       "state" : {
         "revision" : "b45d1f2ed151d057b54504d653e0da5552844e34",
+        "version" : "1.0.0"
+      }
+    },
+    {
+      "identity" : "swiftdeterminism",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/jpurnell/SwiftDeterminism.git",
+      "state" : {
+        "revision" : "7e90f19fd1c93166c7b6b47060747c5c94fa8d1f",
         "version" : "1.0.0"
       }
     }

@@ -2,6 +2,19 @@
 
 All notable changes to ApplesoftBASIC are documented in this file.
 
+## [Unreleased]
+
+### Changed
+- Tests draw `RND` values from `SwiftDeterminism`'s `SplitMix64` rather than a
+  local `SeededGenerator`, removing this project's copy of an algorithm the
+  portfolio had written four times. The two implementations are arithmetically
+  identical — same increment, shifts and multipliers — so every seeded
+  expectation is unchanged, and the suite passes without an edit to any test
+  assertion.
+
+### Removed
+- `Tests/ApplesoftBASICTests/SeededGenerator.swift`, superseded by the package.
+
 ## [0.1.0] - 2026-07-06
 
 ### Fixed

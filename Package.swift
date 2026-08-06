@@ -16,6 +16,9 @@ let package = Package(
     ],
     dependencies: [
         .package(url: "https://github.com/swiftlang/swift-docc-plugin", from: "1.4.3"),
+        // Seeded generation for tests. The interpreter's RND() takes an injected
+        // generator precisely so a failing draw reproduces from its seed.
+        .package(url: "https://github.com/jpurnell/SwiftDeterminism.git", from: "1.0.0"),
     ],
     targets: [
         .target(
@@ -34,7 +37,10 @@ let package = Package(
         ),
         .testTarget(
             name: "ApplesoftBASICTests",
-            dependencies: ["ApplesoftBASICLib"]
+            dependencies: [
+                "ApplesoftBASICLib",
+                .product(name: "SwiftDeterminism", package: "SwiftDeterminism"),
+            ]
         ),
     ]
 )
