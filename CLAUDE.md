@@ -8,8 +8,8 @@ Read documents in this order for full context recovery:
 1. `project/master_plan.md` — Vision and priorities
 2. `development-guidelines/rules/coding_rules.md` — Forbidden patterns, safety rules
 3. `development-guidelines/rules/test_driven_development.md` — Testing contract
-4. `development-guidelines/project/checklists/CURRENT_*.md` — Active tasks (if any)
-5. Latest file in `development-guidelines/project/summaries/` — Where we left off (if any)
+4. `project/checklists/CURRENT_*.md` — Active tasks (if any)
+5. Latest file in `project/summaries/` — Where we left off (if any)
 
 For quick recovery (same-day, simple bug fixes), read only items 4-5.
 
