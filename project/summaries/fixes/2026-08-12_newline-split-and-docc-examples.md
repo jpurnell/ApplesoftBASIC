@@ -63,3 +63,30 @@ The `release-readiness` failure recorded in the 2026-07-06 summary — CHANGELOG
 version committed with no matching tag — was avoided here by tagging locally and
 pushing commit and tag in one `--atomic` push, rather than pushing the commit and
 tagging afterward.
+
+Note the ordering this forces: the gate **cannot** be green before the release
+commit, because the rule wants a tag on a commit that does not exist yet. The
+actual sequence was gate-red → commit → tag → gate-green → atomic push, which
+inverts the project's gate-green-then-commit rule for exactly one commit.
+
+## Follow-On: quality-gate design proposal
+
+Rather than absorb that inversion as ritual, the release-tag rule was audited and
+a design proposal written to
+`Tools/quality-gate-swift/project/plans/proposals/ReleaseTagInvariantPlacement.md`
+(uncommitted; jpurnell is carrying it forward in a separate session). Three
+findings, from reading `ReleaseReadinessAuditor.swift`:
+
+1. The rule is unsatisfiable in the mandated commit order (above).
+2. It is not hermetic but inherits the `.hermetic` default, so it may fail the
+   gate on ref state rather than tree state — the property `HermeticityContract.md`
+   exists to eliminate. A byte-identical commit is red before `git tag`, green
+   after. `Hermeticity` has no case that fits: this is repo ref state, neither
+   `temporal` nor `external`.
+3. It under-detects. `checkVersionTagParity` tests tag-*name* membership in a
+   `Set<String>` and never resolves what the tag points at, and `gitTags` reads
+   local refs only — so an unpushed tag, or a tag on an unrelated commit, passes.
+
+The `.githooks/pre-push` hook installed here in 2026-07-06 does not cover gap 3:
+it delegates to the same check and so sees the same local tag list. It ran on the
+v0.1.1 push and passed.
