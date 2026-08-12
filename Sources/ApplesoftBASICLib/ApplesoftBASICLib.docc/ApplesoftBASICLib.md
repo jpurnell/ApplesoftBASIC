@@ -30,7 +30,8 @@ var lexer = Lexer(source: source)
 let tokens = try lexer.tokenize()
 var parser = Parser(tokens: tokens)
 let program = try parser.parse()
-let interpreter = Interpreter(program: program)
+var rng = SystemRandomNumberGenerator()
+let interpreter = Interpreter(program: program, rng: &rng)
 try interpreter.run()
 ```
 
@@ -41,8 +42,14 @@ Inject ``CapturedOutput`` and ``ScriptedInput`` to capture output and script inp
 ```swift
 let output = CapturedOutput()
 let input = ScriptedInput(responses: ["APPLE"])
-let interpreter = Interpreter(program: program, output: output, input: input)
-try interpreter.run()
+var testableIORNG = SystemRandomNumberGenerator()
+let testableIOInterpreter = Interpreter(
+    program: program,
+    output: output,
+    input: input,
+    rng: &testableIORNG
+)
+try testableIOInterpreter.run()
 // output.lines contains all printed lines
 ```
 

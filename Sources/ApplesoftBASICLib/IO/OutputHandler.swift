@@ -47,9 +47,10 @@ public final class CapturedOutput: OutputHandler, Sendable {
     public var lines: [String] {
         let current = text
         guard !current.isEmpty else { return [] }
-        let result = current.split(separator: "\n", omittingEmptySubsequences: false)
+        let result = current
+            .split(omittingEmptySubsequences: false, whereSeparator: \.isNewline)
             .map(String.init)
-        if current.hasSuffix("\n") {
+        if current.last?.isNewline == true {
             return Array(result.dropLast())
         }
         return result

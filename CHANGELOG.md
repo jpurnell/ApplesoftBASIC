@@ -4,6 +4,15 @@ All notable changes to ApplesoftBASIC are documented in this file.
 
 ## [Unreleased]
 
+### Fixed
+- `CapturedOutput.lines` splits on any newline (`whereSeparator: \.isNewline`)
+  rather than the `"\n"` literal. `"\r\n"` is one `Character` in Swift, so a
+  buffer containing CRLF came back as a single unsplit line; the trailing-newline
+  check now uses `last?.isNewline` for the same reason.
+- The `ApplesoftBASICLib` DocC article's examples pass the required `rng:`
+  argument to `Interpreter.init`, and the "Testable I/O" example no longer
+  redeclares `interpreter` — the two blocks are read as one program.
+
 ### Changed
 - Tests draw `RND` values from `SwiftDeterminism`'s `SplitMix64` rather than a
   local `SeededGenerator`, removing this project's copy of an algorithm the
