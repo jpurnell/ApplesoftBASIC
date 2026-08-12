@@ -2,7 +2,12 @@
 
 All notable changes to ApplesoftBASIC are documented in this file.
 
-## [Unreleased]
+## [0.1.1] - 2026-08-12
+
+### Added
+- `OutputHandlerTests` pins the whole contract of `CapturedOutput.lines` — CRLF,
+  bare CR, interior empty lines, trailing partial line, empty buffer, and
+  `clearScreen` — rather than only the repaired half. 171 tests total.
 
 ### Fixed
 - `CapturedOutput.lines` splits on any newline (`whereSeparator: \.isNewline`)

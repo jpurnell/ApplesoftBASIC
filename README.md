@@ -67,7 +67,8 @@ var lexer = Lexer(source: "10 PRINT \"HELLO WORLD\"")
 let tokens = try lexer.tokenize()
 var parser = Parser(tokens: tokens)
 let program = try parser.parse()
-let interpreter = Interpreter(program: program)
+var rng = SystemRandomNumberGenerator()
+let interpreter = Interpreter(program: program, rng: &rng)
 try interpreter.run()
 ```
 
