@@ -3,6 +3,7 @@ import Testing
 @testable import ApplesoftBASICLib
 
 /// Test spy that records sound calls.
+// Justification: Test-only spy; each test creates its own instance and accesses it from a single task, so no concurrent mutation occurs.
 final class SpySoundHandler: SoundHandler, @unchecked Sendable {
     var beepCount = 0
     var tones: [(frequency: Double, duration: Double)] = []

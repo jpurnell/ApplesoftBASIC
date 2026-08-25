@@ -2,6 +2,14 @@
 
 All notable changes to ApplesoftBASIC are documented in this file.
 
+## [Unreleased]
+
+### Fixed
+- `SpySoundHandler` in `SoundTests` carries the `// Justification:` comment the
+  ConcurrencyAuditor requires for `@unchecked Sendable` — the test spy is
+  single-task per test, so the annotation is safe; the gate had stopped at the
+  concurrency checker over the missing comment.
+
 ## [0.1.1] - 2026-08-12
 
 ### Added
