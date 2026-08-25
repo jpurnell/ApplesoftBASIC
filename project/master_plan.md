@@ -50,6 +50,8 @@ should behave the way it did — including the parts that were surprising then.
 ## Current Status
 
 - [x] Interpreter, CLI, line editor, graphics types
+- [x] ApplesoftBASICLib
+- [x] ApplesoftBASIC
 
 ### Priorities
 1. **Fidelity coverage.** The tests that matter most are real listings with known output.
@@ -72,7 +74,12 @@ assumptions about what BASIC ought to do.
 
 ---
 
-**Last Updated:** 2026-08-12 — reconciled for v0.1.1: dependency line now names
+**Last Updated:** 2026-08-25 — Current Status now names the `ApplesoftBASICLib` and
+`ApplesoftBASIC` targets explicitly, clearing the status checker's notes that the
+Package.swift targets were undocumented here. No architectural change — the targets
+were already described in the Architecture table.
+
+Previous (2026-08-12) — reconciled for v0.1.1: dependency line now names
 `SwiftDeterminism` (test-only), which the "none beyond DocC" claim had missed since it
 was adopted. File counts (16 source, 7 test) still hold; the removed `SeededGenerator`
 and the added `OutputHandlerTests` cancel out. Priorities and Roadmap unchanged — the
