@@ -74,13 +74,9 @@ assumptions about what BASIC ought to do.
 
 ---
 
-**Last Updated:** 2026-08-25 — Current Status now names the `ApplesoftBASICLib` and
-`ApplesoftBASIC` targets explicitly, clearing the status checker's notes that the
-Package.swift targets were undocumented here. No architectural change — the targets
-were already described in the Architecture table.
-
-Previous (2026-08-12) — reconciled for v0.1.1: dependency line now names
-`SwiftDeterminism` (test-only), which the "none beyond DocC" claim had missed since it
-was adopted. File counts (16 source, 7 test) still hold; the removed `SeededGenerator`
-and the added `OutputHandlerTests` cancel out. Priorities and Roadmap unchanged — the
-two **[NEEDS INPUT]** questions are still open and still gate the fidelity work.
+**Last Updated:** 2026-09-30 — Reconciled against the `fallback` checker fixes: no
+architecture, status or roadmap change. Float-to-integer coercion now goes through one
+throwing helper (`BuiltInFunctions.truncatedInt`), which bears on Priority 1 — what
+real Applesoft does at the edges of integer coercion is still unverified against a
+reference; the current behaviour (`?ILLEGAL QUANTITY ERROR`) is a safe choice, not a
+confirmed-faithful one.

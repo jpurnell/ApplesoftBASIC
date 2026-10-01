@@ -5,6 +5,22 @@ All notable changes to ApplesoftBASIC are documented in this file.
 ## [Unreleased]
 
 ### Fixed
+- Numbers that cannot be an `Int` no longer stop the process. `GOTO 1E300`,
+  `LEFT$(A$,1E300)`, `CHR$(X)` with `X` infinite or NaN, array subscripts, `DIM`
+  sizes and every other integer-valued argument now raise `?ILLEGAL QUANTITY
+  ERROR`. All of them convert through one `BuiltInFunctions.truncatedInt(_:)`,
+  which truncates toward zero as before and throws where `Int(_:)` would trap.
+- `MID$` with a negative length raises `?ILLEGAL QUANTITY ERROR` instead of
+  trapping on an inverted range, and a huge start plus a huge length no longer
+  overflows while computing the end position.
+- `AudioSoundHandler.playTone` plays nothing for a NaN frequency or duration
+  rather than clamping it to 20 Hz / 1 ms — a clamp was deciding what an absent
+  value meant. The `SOUND` statement already rejected NaN before reaching it.
+- The `ApplesoftBASICLib.docc` catalogue is back in the library target. The
+  0.1.0 exclusion rested on a wrong premise: swift-docc-plugin finds a catalogue
+  through the target's source files, so excluding it meant DocC received no
+  articles and their links were never checked. SwiftPM at tools 6.2 handles the
+  catalogue without the "unhandled files" warning the exclusion was added for.
 - `SpySoundHandler` in `SoundTests` carries the `// Justification:` comment the
   ConcurrencyAuditor requires for `@unchecked Sendable` — the test spy is
   single-task per test, so the annotation is safe; the gate had stopped at the

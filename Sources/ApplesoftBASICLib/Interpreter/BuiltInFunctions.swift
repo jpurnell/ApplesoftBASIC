@@ -101,7 +101,7 @@ enum BuiltInFunctions {
             guard let count = numericArgs.first else {
                 throw BASICError.illegalQuantity(0)
             }
-            let n = Int(count)
+            let n = try truncatedInt(count)
             guard n >= 0 else {
                 throw BASICError.illegalQuantity(count)
             }
@@ -115,7 +115,7 @@ enum BuiltInFunctions {
             guard let count = numericArgs.first else {
                 throw BASICError.illegalQuantity(0)
             }
-            let n = Int(count)
+            let n = try truncatedInt(count)
             guard n >= 0 else {
                 throw BASICError.illegalQuantity(count)
             }
@@ -129,15 +129,18 @@ enum BuiltInFunctions {
             guard numericArgs.count >= 1 else {
                 throw BASICError.illegalQuantity(0)
             }
-            let start = Int(numericArgs[0])
+            let start = try truncatedInt(numericArgs[0])
             guard start >= 1 else {
                 throw BASICError.illegalQuantity(numericArgs[0])
             }
             let adjustedStart = start - 1 // BASIC is 1-indexed
             if numericArgs.count >= 2 {
-                let length = Int(numericArgs[1])
-                let endPos = min(adjustedStart + length, str.count)
+                let length = try truncatedInt(numericArgs[1])
+                guard length >= 0 else {
+                    throw BASICError.illegalQuantity(numericArgs[1])
+                }
                 if adjustedStart >= str.count { return "" }
+                let endPos = adjustedStart + min(length, str.count - adjustedStart)
                 let startIdx = str.index(str.startIndex, offsetBy: adjustedStart)
                 let endIdx = str.index(str.startIndex, offsetBy: endPos)
                 return String(str[startIdx..<endIdx])
@@ -152,7 +155,7 @@ enum BuiltInFunctions {
             guard let code = numericArgs.first else {
                 throw BASICError.illegalQuantity(0)
             }
-            let intCode = Int(code)
+            let intCode = try truncatedInt(code)
             guard intCode >= 0 && intCode <= 127 else {
                 throw BASICError.illegalQuantity(code)
             }
@@ -174,11 +177,25 @@ enum BuiltInFunctions {
 
     /// Formats a number for PRINT output, matching Applesoft conventions.
     static func formatNumber(_ value: Double) -> String {
-        if value == floor(value) && abs(value) < 1e15 {
+        // Int(exactly:) is nil for NaN, infinities and anything with a fractional part.
+        if let whole = Int(exactly: value), abs(value) < 1e15 {
             // Integer: no decimal point
-            return String(Int(value))
+            return String(whole)
         }
         // Floating point
         return String(value)
+    }
+
+    /// Truncates a BASIC number toward zero for use as an integer quantity.
+    ///
+    /// - Parameter value: The number to convert.
+    /// - Returns: The integer part of `value`.
+    /// - Throws: ``BASICError/illegalQuantity(_:)`` if `value` is NaN, infinite,
+    ///   or outside the range of `Int` — cases where `Int(value)` would trap.
+    static func truncatedInt(_ value: Double) throws -> Int {
+        guard let result = Int(exactly: value.rounded(.towardZero)) else {
+            throw BASICError.illegalQuantity(value)
+        }
+        return result
     }
 }

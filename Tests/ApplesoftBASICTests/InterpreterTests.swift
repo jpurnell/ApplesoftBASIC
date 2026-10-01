@@ -712,6 +712,58 @@ struct InterpreterTests {
         }
     }
 
+    // MARK: - Edge Cases: Unrepresentable Numbers
+
+    @Test(
+        "Out-of-range, infinite and NaN values throw ILLEGAL QUANTITY instead of trapping",
+        arguments: [
+            "10 GOTO 1E300",
+            "10 PRINT LEFT$(\"ABC\",1E300)",
+            "10 PRINT RIGHT$(\"ABC\",1E300)",
+            "10 PRINT MID$(\"ABC\",1E300)",
+            "10 PRINT MID$(\"ABC\",1,1E300)",
+            "10 PRINT CHR$(1E300)",
+            "10 X = 1E300 * 1E300\n20 PRINT LEFT$(\"ABC\",X)",
+            "10 X = 1E300 * 1E300\n20 PRINT CHR$(X - X)",
+            "10 X = 1E300 * 1E300\n20 DIM A(X - X)",
+        ]
+    )
+    func unrepresentableQuantity(source: String) {
+        #expect(throws: BASICError.self) {
+            try run(source + "\n90 END")
+        }
+    }
+
+    @Test("MID$ with negative length throws instead of trapping")
+    func midNegativeLength() {
+        #expect(throws: BASICError.self) {
+            try run("10 PRINT MID$(\"ABC\",2,-1)\n20 END")
+        }
+    }
+
+    @Test("MID$ with a huge start and length does not overflow")
+    func midHugeStartAndLength() throws {
+        let output = try run("10 PRINT \"[\";MID$(\"ABC\",9E18,9E18);\"]\"\n20 END")
+        #expect(output.text.contains("[]"))
+    }
+
+    @Test("formatNumber handles non-finite and large values")
+    func formatNumberNonFinite() {
+        #expect(BuiltInFunctions.formatNumber(.nan) == "nan")
+        #expect(BuiltInFunctions.formatNumber(.infinity) == "inf")
+        #expect(BuiltInFunctions.formatNumber(42) == "42")
+        #expect(BuiltInFunctions.formatNumber(-3) == "-3")
+        #expect(BuiltInFunctions.formatNumber(1.5) == "1.5")
+        #expect(BuiltInFunctions.formatNumber(1e16) == "1e+16")
+    }
+
+    @Test("SOUND with NaN arguments throws")
+    func soundNaN() {
+        #expect(throws: BASICError.self) {
+            try run("10 X = 1E300 * 1E300\n20 SOUND X - X,X - X\n30 END")
+        }
+    }
+
     // MARK: - Stress Tests
 
     @Test("Infinite loop is caught by step limit")

@@ -743,7 +743,7 @@ public final class Interpreter: Sendable {
 
     private func evaluateToInt(_ expr: Expression, rs: inout RunState) throws -> Int {
         let value = try evaluateNumeric(expr, rs: &rs)
-        return Int(value)
+        return try BuiltInFunctions.truncatedInt(value)
     }
 
     private func evaluateNumeric(_ expr: Expression, rs: inout RunState) throws -> Double {

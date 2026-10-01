@@ -82,8 +82,10 @@ public final class AudioSoundHandler: SoundHandler, Sendable {
     }
 
     /// Plays a square-wave tone at the specified frequency.
-    /// Blocks for the full duration of the tone.
+    /// Blocks for the full duration of the tone. A NaN frequency or duration
+    /// plays nothing: there is no tone to clamp into range.
     public func playTone(frequency: Double, duration: Double) {
+        guard !frequency.isNaN, !duration.isNaN else { return }
         let freq = max(20, min(frequency, 20000))
         let dur = max(0.001, min(duration, 30))
 
